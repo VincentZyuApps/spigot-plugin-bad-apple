@@ -1,0 +1,9 @@
+name: spigot-plugin-bad-apple
+version: '0.1.0-alpha2'
+main: qwq.zyu.spigotPluginBadApple.SpigotPluginBadApple
+api-version: '1.21'
+
+commands:
+  play_bad_apple:
+    description: 播放bad_apple
+    usage: 直接输入本指令即可

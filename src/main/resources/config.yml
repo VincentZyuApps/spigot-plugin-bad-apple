@@ -1,0 +1,18 @@
+# Bad Apple Plugin Configuration
+
+# 视频播放墙体配置
+video_wall:
+  # 墙体左下角方块的坐标
+  position:
+    x: 0
+    y: 64
+    z: 0
+  # 墙体朝向 (NORTH, SOUTH, EAST, WEST)
+  direction: NORTH
+  
+# 播放设置
+playback:
+  # 是否启用视频播放功能
+  enabled: true
+  # 播放冷却时间（秒）
+  cooldown: 235  # 3分55秒
