@@ -1,5 +1,5 @@
 name: spigot-plugin-bad-apple
-version: '0.2.4-alpha12'
+version: '0.2.4-rc1'
 main: qwq.zyu.spigotPluginBadApple.SpigotPluginBadApple
 api-version: '1.21'
 

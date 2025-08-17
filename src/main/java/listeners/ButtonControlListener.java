@@ -56,7 +56,7 @@ public class ButtonControlListener implements Listener {
             if (plugin.isAudioEnabled()) {
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                     plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                            "playsound music:music_disc.bad_apple record @a ~ ~ ~ 10000 1.0");
+                            "playsound niacl:music_disc.bad_apple record @a ~ ~ ~ 10000 1.0");
                 }, delay);
             }
         }
@@ -77,7 +77,7 @@ public class ButtonControlListener implements Listener {
                 // 停止音乐
                 if (e.getPlayer() != null) {
                     plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                            "stopsound @a record music:music_disc.bad_apple");
+                            "stopsound @a record niacl:music_disc.bad_apple");
                 }
             }
         }
@@ -118,7 +118,7 @@ public class ButtonControlListener implements Listener {
                 if (plugin.isAudioEnabled()) {
                     plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                         plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                                "playsound music:music_disc.bad_apple record @a ~ ~ ~ 10000 1.0");
+                                "playsound niacl:music_disc.bad_apple record @a ~ ~ ~ 10000 1.0");
                     }, delay);
                 }
                 
@@ -140,7 +140,7 @@ public class ButtonControlListener implements Listener {
                 if (plugin.isAudioEnabled()) {
                     // 停止音乐
                     plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                            "stopsound @a record music:music_disc.bad_apple");
+                            "stopsound @a record niacl:music_disc.bad_apple");
                 }
                 
                 e.getPlayer().sendMessage("§c[Bad Apple] 停止播放 Block 模式！");

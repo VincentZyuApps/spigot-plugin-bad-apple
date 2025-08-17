@@ -1,5 +1,11 @@
 # Bad Apple Plugin Configuration
 
+# 全局画面设置
+video_settings:
+  # 是否在读取bin文件时进行水平翻转（镜像）
+  # true: 画面左右翻转，false: 保持原始画面
+  horizontal_flip: true
+
 # 视频播放墙体配置 (block模式)
 video_wall:
   # 墙体左下角方块的坐标

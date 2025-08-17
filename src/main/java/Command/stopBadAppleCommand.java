@@ -76,7 +76,7 @@ public class stopBadAppleCommand implements CommandExecutor {
         if (plugin.isAudioEnabled()) {
             plugin.getServer().dispatchCommand(
                 plugin.getServer().getConsoleSender(),
-                "stopsound @a music music:music_disc.bad_apple");
+                "stopsound @a record niacl:music_disc.bad_apple");
             plugin.getLogger().info("[stopBadApple] 已停止所有玩家的音乐播放");
         } else {
             plugin.getLogger().info("[stopBadApple] 音频已禁用，跳过音乐停止");

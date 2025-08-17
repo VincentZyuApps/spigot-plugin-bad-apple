@@ -32,6 +32,16 @@ public class VideoPlayer {
     private static final int FRAMES_PER_SECOND = 10;
     private static final int TICKS_PER_FRAME = 2; // (20 ticks/s) / (10 fps) = 2 ticks/frame
     private static final int ENTITIES_PER_TICK = 1000; // 每 tick 创建的实体数量上限
+    
+    // 画面裁剪配置 - 去除左右黑边，减少实体数量
+    private static final int CROP_LEFT = 12;   // 左侧裁剪像素数
+    private static final int CROP_RIGHT = 12;  // 右侧裁剪像素数
+    private static final int CROP_TOP = 0;     // 顶部裁剪像素数（暂不裁剪）
+    private static final int CROP_BOTTOM = 0;  // 底部裁剪像素数（暂不裁剪）
+    
+    // 实际显示区域尺寸
+    private static final int DISPLAY_WIDTH = FRAME_WIDTH - CROP_LEFT - CROP_RIGHT;   // 96 - 12 - 12 = 72
+    private static final int DISPLAY_HEIGHT = FRAME_HEIGHT - CROP_TOP - CROP_BOTTOM; // 54 - 0 - 0 = 54
 
     private final SpigotPluginBadApple plugin;
     private final List<byte[][]> frames;
@@ -76,6 +86,9 @@ public class VideoPlayer {
             ZipInputStream zipStream = new ZipInputStream(resourceStream);
             ZipEntry entry;
             plugin.getLogger().info("开始加载视频帧数据...");
+            plugin.getLogger().info("画面设置 - 水平翻转: " + plugin.isHorizontalFlip() + 
+                ", 裁剪区域: " + DISPLAY_WIDTH + "x" + DISPLAY_HEIGHT + 
+                " (左" + CROP_LEFT + " 右" + CROP_RIGHT + " 上" + CROP_TOP + " 下" + CROP_BOTTOM + ")");
             int frameIndex = 0;
             while ((entry = zipStream.getNextEntry()) != null) {
                 if (entry.getName().endsWith(".bin")) {
@@ -104,11 +117,34 @@ public class VideoPlayer {
         int width = ((header[0] & 0xFF) << 24) | ((header[1] & 0xFF) << 16) | ((header[2] & 0xFF) << 8) | (header[3] & 0xFF);
         int height = ((header[4] & 0xFF) << 24) | ((header[5] & 0xFF) << 16) | ((header[6] & 0xFF) << 8) | (header[7] & 0xFF);
         if (width != FRAME_WIDTH || height != FRAME_HEIGHT) return null;
-        byte[][] frameData = new byte[height][width];
+        
+        // 读取完整的原始帧数据
+        byte[][] originalFrameData = new byte[height][width];
         for (int y = 0; y < height; y++) {
-            stream.readNBytes(frameData[y], 0, width);
+            stream.readNBytes(originalFrameData[y], 0, width);
         }
-        return frameData;
+        
+        // 检查是否需要水平翻转
+        boolean shouldFlip = plugin.isHorizontalFlip();
+        
+        // 裁剪帧数据，只保留有效显示区域
+        byte[][] croppedFrameData = new byte[DISPLAY_HEIGHT][DISPLAY_WIDTH];
+        for (int y = 0; y < DISPLAY_HEIGHT; y++) {
+            for (int x = 0; x < DISPLAY_WIDTH; x++) {
+                // 从原始帧数据中提取裁剪区域的像素
+                int originalX = x + CROP_LEFT;
+                int originalY = y + CROP_TOP;
+                
+                // 如果启用水平翻转，翻转X坐标
+                if (shouldFlip) {
+                    originalX = FRAME_WIDTH - 1 - originalX;
+                }
+                
+                croppedFrameData[y][x] = originalFrameData[originalY][originalX];
+            }
+        }
+        
+        return croppedFrameData;
     }
 
     /**
@@ -136,14 +172,16 @@ public class VideoPlayer {
             
             // 如果是 text 模式，输出左下角像素格子中心坐标
             if ("text".equals(playMode)) {
-                // 计算左下角像素的中心坐标
-                Vector3f leftBottomCenter = getPixelTranslation(0, FRAME_HEIGHT - 1, 0);
+                // 计算显示区域左下角像素的中心坐标
+                Vector3f leftBottomCenter = getPixelTranslation(0, DISPLAY_HEIGHT - 1, 0);
                 Location leftBottomLocation = wallPosition.clone().add(
                     leftBottomCenter.x, leftBottomCenter.y, leftBottomCenter.z);
                 
-                plugin.getLogger().info("Text模式 - 左下角像素格子中心坐标: " +
+                plugin.getLogger().info("Text模式 - 显示区域左下角像素格子中心坐标: " +
                     String.format("X=%.3f, Y=%.3f, Z=%.3f",
                     leftBottomLocation.getX(), leftBottomLocation.getY(), leftBottomLocation.getZ()));
+                plugin.getLogger().info("显示区域: " + DISPLAY_WIDTH + "x" + DISPLAY_HEIGHT + 
+                    " (裁剪: 左" + CROP_LEFT + " 右" + CROP_RIGHT + " 上" + CROP_TOP + " 下" + CROP_BOTTOM + ")");
             }
             
             // 创建并启动新的播放任务
@@ -167,20 +205,22 @@ public class VideoPlayer {
         if (world == null) return;
 
         boolean enableBothSide = plugin.isEnableBothSide();
-        int totalEntities = FRAME_WIDTH * FRAME_HEIGHT * (enableBothSide ? 2 : 1);
+        // 使用裁剪后的显示区域计算实体数量
+        int totalEntities = DISPLAY_WIDTH * DISPLAY_HEIGHT * (enableBothSide ? 2 : 1);
         
         plugin.getLogger().info("开始异步创建 " + totalEntities + " 个 TextDisplay 实体" +
+            "（显示区域: " + DISPLAY_WIDTH + "x" + DISPLAY_HEIGHT + "，原始: " + FRAME_WIDTH + "x" + FRAME_HEIGHT + "）" +
             (enableBothSide ? "（双面模式，背靠背）" : "（单面模式）") + "，已添加 bad_apple 和 screen 标签...");
 
         new BukkitRunnable() {
-            private int x = 0;
-            private int y = 0;
+            private int x = 0;     // 直接使用显示区域坐标
+            private int y = 0;     // 直接使用显示区域坐标
 
             @Override
             public void run() {
                 int entitiesCreatedThisTick = 0;
 
-                while (y < FRAME_HEIGHT && entitiesCreatedThisTick < ENTITIES_PER_TICK) {
+                while (y < DISPLAY_HEIGHT && entitiesCreatedThisTick < ENTITIES_PER_TICK) {
                     Vector3f translation = getPixelTranslation(x, y, 0);
                     
                     if (enableBothSide) {
@@ -205,14 +245,15 @@ public class VideoPlayer {
                     }
 
                     x++;
-                    if (x >= FRAME_WIDTH) {
-                        x = 0;
+                    if (x >= DISPLAY_WIDTH) {
+                        x = 0;  // 重置到显示区域起始位置
                         y++;
                     }
                 }
 
-                if (y >= FRAME_HEIGHT) {
-                    plugin.getLogger().info("TextDisplay 实体创建完成！" +
+                if (y >= DISPLAY_HEIGHT) {
+                    plugin.getLogger().info("TextDisplay 实体创建完成！实际创建: " + textDisplayPairs.size() + 
+                        " 个实体对，节省: " + (FRAME_WIDTH * FRAME_HEIGHT - DISPLAY_WIDTH * DISPLAY_HEIGHT) + " 个实体" +
                         (enableBothSide ? "（双面模式）" : "（单面模式）"));
                     cancel();
                     Bukkit.getScheduler().runTask(plugin, onComplete);
@@ -224,40 +265,41 @@ public class VideoPlayer {
     private Vector3f getPixelTranslation(int x, int y, float zOffset) {
         double pixelSize = 0.06; // 像素间距
         
+        // 现在 x, y 已经是显示区域内的坐标，无需额外转换
         // 参考 Block 模式的坐标映射逻辑，保持一致性
         float adjustedX, adjustedZ;
         
         switch (direction.toUpperCase()) {
             case "NORTH" -> {
-                // 朝北：X轴正常排列
-                adjustedX = (float) ((x - FRAME_WIDTH / 2.0) * pixelSize);
+                // 朝北：X轴正常排列，基于显示区域居中
+                adjustedX = (float) ((x - DISPLAY_WIDTH / 2.0) * pixelSize);
                 adjustedZ = zOffset;
             }
             case "SOUTH" -> {
                 // 朝南：X轴翻转排列（与Block模式一致）
-                adjustedX = (float) (((FRAME_WIDTH - 1 - x) - FRAME_WIDTH / 2.0) * pixelSize);
+                adjustedX = (float) (((DISPLAY_WIDTH - 1 - x) - DISPLAY_WIDTH / 2.0) * pixelSize);
                 adjustedZ = zOffset;
             }
             case "EAST" -> {
                 // 朝东：沿Z轴排列（与Block模式一致）
                 adjustedX = zOffset;
-                adjustedZ = (float) ((x - FRAME_WIDTH / 2.0) * pixelSize);
+                adjustedZ = (float) ((x - DISPLAY_WIDTH / 2.0) * pixelSize);
             }
             case "WEST" -> {
                 // 朝西：沿Z轴翻转排列（与Block模式一致）
                 adjustedX = zOffset;
-                adjustedZ = (float) (((FRAME_WIDTH - 1 - x) - FRAME_WIDTH / 2.0) * pixelSize);
+                adjustedZ = (float) (((DISPLAY_WIDTH - 1 - x) - DISPLAY_WIDTH / 2.0) * pixelSize);
             }
             default -> {
                 // 默认朝北
-                adjustedX = (float) ((x - FRAME_WIDTH / 2.0) * pixelSize);
+                adjustedX = (float) ((x - DISPLAY_WIDTH / 2.0) * pixelSize);
                 adjustedZ = zOffset;
             }
         }
         
         return new Vector3f(
                 adjustedX,
-                (float) ((FRAME_HEIGHT / 2.0 - y) * pixelSize), // Y轴始终不变
+                (float) ((DISPLAY_HEIGHT / 2.0 - y) * pixelSize), // Y轴基于显示区域居中
                 adjustedZ
         );
     }
@@ -433,44 +475,39 @@ public class VideoPlayer {
 
     /**
      * 渲染 TextDisplay 模式的视频帧。
-     * @param frameData 帧数据。
+     * @param frameData 已裁剪的帧数据。
      */
     private void renderFrameTextDisplay(byte[][] frameData) {
-        if (textDisplayPairs.size() != FRAME_WIDTH * FRAME_HEIGHT) return;
+        if (textDisplayPairs.size() != DISPLAY_WIDTH * DISPLAY_HEIGHT) return;
 
         // ARGB 颜色常量
         final int WHITE_ARGB = 0xFFFFFFFF; // 白色，完全不透明
         final int BLACK_ARGB = 0xFF000000; // 黑色，完全不透明
 
-        for (int screenY = 0; screenY < FRAME_HEIGHT; screenY++) {
-            for (int screenX = 0; screenX < FRAME_WIDTH; screenX++) {
-                // 计算屏幕上的像素索引（实体在数组中的位置）
-                int pixelIndex = screenY * FRAME_WIDTH + screenX;
-                TextDisplayPair pair = textDisplayPairs.get(pixelIndex);
+        int entityIndex = 0;
+        // 直接遍历裁剪后的帧数据
+        for (int y = 0; y < DISPLAY_HEIGHT; y++) {
+            for (int x = 0; x < DISPLAY_WIDTH; x++) {
+                if (entityIndex >= textDisplayPairs.size()) break;
                 
-                // 根据朝向获取对应的帧数据坐标
-                int[] frameCoords = getFrameDataCoordinates(screenX, screenY);
-                int frameX = frameCoords[0];
-                int frameY = frameCoords[1];
-                
-                // 确保坐标在有效范围内
-                if (frameX >= 0 && frameX < FRAME_WIDTH && frameY >= 0 && frameY < FRAME_HEIGHT) {
-                    byte pixelValue = frameData[frameY][frameX];
+                TextDisplayPair pair = textDisplayPairs.get(entityIndex);
+                byte pixelValue = frameData[y][x];  // 直接使用裁剪后的数据
 
-                    // 根据像素值设置背景颜色
-                    int backgroundColor = (pixelValue == 1) ? WHITE_ARGB : BLACK_ARGB;
-                    org.bukkit.Color color = org.bukkit.Color.fromARGB(backgroundColor);
-                    
-                    // 更新正面实体
-                    if (pair.front != null) {
-                        pair.front.setBackgroundColor(color);
-                    }
-                    
-                    // 如果是双面模式，同时更新背面实体
-                    if (pair.isBothSide() && pair.back != null) {
-                        pair.back.setBackgroundColor(color);
-                    }
+                // 根据像素值设置背景颜色
+                int backgroundColor = (pixelValue == 1) ? WHITE_ARGB : BLACK_ARGB;
+                org.bukkit.Color color = org.bukkit.Color.fromARGB(backgroundColor);
+                
+                // 更新正面实体
+                if (pair.front != null) {
+                    pair.front.setBackgroundColor(color);
                 }
+                
+                // 如果是双面模式，同时更新背面实体
+                if (pair.isBothSide() && pair.back != null) {
+                    pair.back.setBackgroundColor(color);
+                }
+                
+                entityIndex++;
             }
         }
     }

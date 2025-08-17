@@ -27,6 +27,7 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     private boolean videoEnabled;
     private int cooldownSeconds;
     private boolean enableAudio;
+    private boolean horizontalFlip; // 是否启用水平翻转
     private debugTextDisplayChessCommand chessCommand;
     private VideoPlayer videoPlayer;
     // Button controls
@@ -113,6 +114,9 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     
     private void loadConfiguration() {
         reloadConfig();
+        
+        // 读取全局画面设置
+        horizontalFlip = getConfig().getBoolean("video_settings.horizontal_flip", true);
         
         // 读取墙体位置配置 (block模式)
         double x = getConfig().getDouble("video_wall.position.x", 0.0);
@@ -305,5 +309,8 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     
     // Text display 配置获取方法
     public boolean isEnableBothSide() { return enableBothSide; }
+    
+    // 视频画面设置获取方法
+    public boolean isHorizontalFlip() { return horizontalFlip; }
 
 }
