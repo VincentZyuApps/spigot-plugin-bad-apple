@@ -68,8 +68,8 @@ public class stopBadAppleCommand implements CommandExecutor {
             return true;
         }
         
-        // 停止播放
-        videoPlayer.stopPlayback(stopMode, true); // 保留当前画面，不清除实体
+        // 停止播放（手动停止）
+        videoPlayer.stopPlayback(stopMode, true, true); // 第三个参数表示手动停止
         plugin.getLogger().info("[stopBadApple] 成功停止播放，模式: " + stopMode);
         
         // 停止所有玩家的音乐

@@ -41,6 +41,15 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     private boolean textCommandStopEnabled;
     private boolean textButtonStartEnabled;
     private boolean textButtonStopEnabled;
+    
+    // Cleanup configurations
+    private boolean blockClearOnComplete;
+    private boolean blockClearOnStop;
+    private boolean textClearOnComplete;
+    private boolean textClearOnStop;
+    
+    // Text display configurations
+    private boolean enableBothSide;
 
     @Override
     public void onEnable() {
@@ -118,6 +127,7 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         double textZ = getConfig().getDouble("video_text.position.z", 100.0);
         textPosition = new Location(getServer().getWorlds().get(0), textX, textY, textZ);
         textDirection = getConfig().getString("video_text.direction", "NORTH");
+        enableBothSide = getConfig().getBoolean("video_text.enableBothSide", false);
         
         // 读取播放设置
         videoEnabled = getConfig().getBoolean("playback.enabled", true);
@@ -138,10 +148,17 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         textButtonStartEnabled = getConfig().getBoolean("triggers.text.button_start_enabled", true);
         textButtonStopEnabled = getConfig().getBoolean("triggers.text.button_stop_enabled", true);
         
+        // 读取清理配置
+        blockClearOnComplete = getConfig().getBoolean("cleanup.block.clear_on_complete", true);
+        blockClearOnStop = getConfig().getBoolean("cleanup.block.clear_on_stop", true);
+        textClearOnComplete = getConfig().getBoolean("cleanup.text.clear_on_complete", true);
+        textClearOnStop = getConfig().getBoolean("cleanup.text.clear_on_stop", true);
+        
         getLogger().info("配置已加载:");
         getLogger().info("Block模式 - 墙体位置(" + x + "," + y + "," + z + "), 朝向: " + wallDirection);
-        getLogger().info("Text模式 - 墙体位置(" + textX + "," + textY + "," + textZ + "), 朝向: " + textDirection);
+        getLogger().info("Text模式 - 墙体位置(" + textX + "," + textY + "," + textZ + "), 朝向: " + textDirection + ", 双面显示: " + enableBothSide);
         getLogger().info("触发方式配置已加载完成");
+        getLogger().info("清理配置 - Block[完成:" + blockClearOnComplete + ", 停止:" + blockClearOnStop + "], Text[完成:" + textClearOnComplete + ", 停止:" + textClearOnStop + "]");
     }
     
     public boolean isPlaying() {
@@ -279,5 +296,14 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     public boolean isTextCommandStopEnabled() { return textCommandStopEnabled; }
     public boolean isTextButtonStartEnabled() { return textButtonStartEnabled; }
     public boolean isTextButtonStopEnabled() { return textButtonStopEnabled; }
+
+    // 清理配置获取方法
+    public boolean isBlockClearOnComplete() { return blockClearOnComplete; }
+    public boolean isBlockClearOnStop() { return blockClearOnStop; }
+    public boolean isTextClearOnComplete() { return textClearOnComplete; }
+    public boolean isTextClearOnStop() { return textClearOnStop; }
+    
+    // Text display 配置获取方法
+    public boolean isEnableBothSide() { return enableBothSide; }
 
 }

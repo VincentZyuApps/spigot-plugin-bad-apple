@@ -35,15 +35,25 @@ public class VideoPlayer {
 
     private final SpigotPluginBadApple plugin;
     private final List<byte[][]> frames;
-    private final List<TextDisplayPair> textDisplayPairs; // 用于text模式的背靠背实体对列表
+    private final List<TextDisplayPair> textDisplayPairs; // 用于text模式的实体对列表
     private Location wallPosition;
     private String direction;
     private String playMode = "block"; // 播放模式, "block" 或 "text"
     private boolean isPlaying = false;
     private VideoPlaybackTask currentPlaybackTask; // 当前播放任务的引用
 
-    // 记录背靠背的两个TextDisplay实体
-    private record TextDisplayPair(TextDisplay front, TextDisplay back) {}
+    // 记录TextDisplay实体（可能是单个或背靠背的两个）
+    private record TextDisplayPair(TextDisplay front, TextDisplay back) {
+        // 构造单个实体的情况
+        public TextDisplayPair(TextDisplay single) {
+            this(single, null);
+        }
+        
+        // 检查是否为双面模式
+        public boolean isBothSide() {
+            return back != null;
+        }
+    }
 
     public VideoPlayer(SpigotPluginBadApple plugin) {
         this.plugin = plugin;
@@ -156,7 +166,11 @@ public class VideoPlayer {
         World world = wallPosition.getWorld();
         if (world == null) return;
 
-        plugin.getLogger().info("开始异步创建 " + (FRAME_WIDTH * FRAME_HEIGHT * 2) + " 个背靠背 TextDisplay 实体（已添加 bad_apple 和 screen 标签）...");
+        boolean enableBothSide = plugin.isEnableBothSide();
+        int totalEntities = FRAME_WIDTH * FRAME_HEIGHT * (enableBothSide ? 2 : 1);
+        
+        plugin.getLogger().info("开始异步创建 " + totalEntities + " 个 TextDisplay 实体" +
+            (enableBothSide ? "（双面模式，背靠背）" : "（单面模式）") + "，已添加 bad_apple 和 screen 标签...");
 
         new BukkitRunnable() {
             private int x = 0;
@@ -167,19 +181,28 @@ public class VideoPlayer {
                 int entitiesCreatedThisTick = 0;
 
                 while (y < FRAME_HEIGHT && entitiesCreatedThisTick < ENTITIES_PER_TICK) {
-                    // 创建背靠背的实体对
                     Vector3f translation = getPixelTranslation(x, y, 0);
                     
-                    // 正面朝向（朝向玩家方向）
-                    Quaternionf frontRotation = new Quaternionf().rotationYXZ((float) Math.toRadians(180), 0, 0);
-                    TextDisplay frontDisplay = createPixelEntity(world, 0xFF000000, translation, frontRotation); // 黑色 ARGB
-                    
-                    // 背面朝向（背向玩家方向）
-                    Quaternionf backRotation = new Quaternionf().rotationYXZ(0, 0, 0); // 不旋转，面向反方向
-                    TextDisplay backDisplay = createPixelEntity(world, 0xFF000000, translation, backRotation); // 黑色 ARGB
+                    if (enableBothSide) {
+                        // 双面模式：创建背靠背的实体对
+                        // 正面朝向（朝向玩家方向）
+                        Quaternionf frontRotation = getTextDisplayRotation(true);
+                        TextDisplay frontDisplay = createPixelEntity(world, 0xFF000000, translation, frontRotation);
+                        
+                        // 背面朝向（背向玩家方向）
+                        Quaternionf backRotation = getTextDisplayRotation(false);
+                        TextDisplay backDisplay = createPixelEntity(world, 0xFF000000, translation, backRotation);
 
-                    textDisplayPairs.add(new TextDisplayPair(frontDisplay, backDisplay));
-                    entitiesCreatedThisTick += 2;
+                        textDisplayPairs.add(new TextDisplayPair(frontDisplay, backDisplay));
+                        entitiesCreatedThisTick += 2;
+                    } else {
+                        // 单面模式：只创建一个朝向玩家的实体
+                        Quaternionf rotation = getTextDisplayRotation(true);
+                        TextDisplay display = createPixelEntity(world, 0xFF000000, translation, rotation);
+                        
+                        textDisplayPairs.add(new TextDisplayPair(display));
+                        entitiesCreatedThisTick += 1;
+                    }
 
                     x++;
                     if (x >= FRAME_WIDTH) {
@@ -189,7 +212,8 @@ public class VideoPlayer {
                 }
 
                 if (y >= FRAME_HEIGHT) {
-                    plugin.getLogger().info("背靠背 TextDisplay 实体创建完成！");
+                    plugin.getLogger().info("TextDisplay 实体创建完成！" +
+                        (enableBothSide ? "（双面模式）" : "（单面模式）"));
                     cancel();
                     Bukkit.getScheduler().runTask(plugin, onComplete);
                 }
@@ -199,11 +223,96 @@ public class VideoPlayer {
 
     private Vector3f getPixelTranslation(int x, int y, float zOffset) {
         double pixelSize = 0.06; // 像素间距
+        
+        // 参考 Block 模式的坐标映射逻辑，保持一致性
+        float adjustedX, adjustedZ;
+        
+        switch (direction.toUpperCase()) {
+            case "NORTH" -> {
+                // 朝北：X轴正常排列
+                adjustedX = (float) ((x - FRAME_WIDTH / 2.0) * pixelSize);
+                adjustedZ = zOffset;
+            }
+            case "SOUTH" -> {
+                // 朝南：X轴翻转排列（与Block模式一致）
+                adjustedX = (float) (((FRAME_WIDTH - 1 - x) - FRAME_WIDTH / 2.0) * pixelSize);
+                adjustedZ = zOffset;
+            }
+            case "EAST" -> {
+                // 朝东：沿Z轴排列（与Block模式一致）
+                adjustedX = zOffset;
+                adjustedZ = (float) ((x - FRAME_WIDTH / 2.0) * pixelSize);
+            }
+            case "WEST" -> {
+                // 朝西：沿Z轴翻转排列（与Block模式一致）
+                adjustedX = zOffset;
+                adjustedZ = (float) (((FRAME_WIDTH - 1 - x) - FRAME_WIDTH / 2.0) * pixelSize);
+            }
+            default -> {
+                // 默认朝北
+                adjustedX = (float) ((x - FRAME_WIDTH / 2.0) * pixelSize);
+                adjustedZ = zOffset;
+            }
+        }
+        
         return new Vector3f(
-                (float) ((x - FRAME_WIDTH / 2.0) * pixelSize),
-                (float) ((FRAME_HEIGHT / 2.0 - y) * pixelSize),
-                zOffset
+                adjustedX,
+                (float) ((FRAME_HEIGHT / 2.0 - y) * pixelSize), // Y轴始终不变
+                adjustedZ
         );
+    }
+
+    /**
+     * 根据配置的朝向计算 TextDisplay 实体的旋转角度
+     * @param isFront 是否为正面（true=正面朝向玩家，false=背面朝向玩家）
+     * @return 旋转四元数
+     */
+    private Quaternionf getTextDisplayRotation(boolean isFront) {
+        // 基础朝向角度（相对于NORTH方向的偏移）
+        float baseYaw = switch (direction.toUpperCase()) {
+            case "NORTH" -> 0f;          // 朝北，无偏移
+            case "SOUTH" -> 180f;        // 朝南，旋转180度
+            case "EAST" -> 270f;         // 朝东，旋转270度（-90度）
+            case "WEST" -> 90f;          // 朝西，旋转90度
+            default -> 0f;
+        };
+        
+        // 如果是正面，需要额外旋转180度让文字朝向玩家
+        // 如果是背面，则不需要额外旋转
+        float finalYaw = isFront ? baseYaw + 180f : baseYaw;
+        
+        return new Quaternionf().rotationYXZ((float) Math.toRadians(finalYaw), 0, 0);
+    }
+
+    /**
+     * 根据朝向计算正确的像素索引
+     * @param x 原始X坐标
+     * @param y 原始Y坐标
+     * @return 调整后的像素索引
+     */
+    private int getDirectionAdjustedPixelIndex(int x, int y) {
+        // 根据朝向调整X坐标
+        int adjustedX = switch (direction.toUpperCase()) {
+            case "NORTH" -> x;                    // 朝北：正常顺序
+            case "SOUTH" -> FRAME_WIDTH - 1 - x;  // 朝南：X轴翻转
+            case "EAST" -> x;                     // 朝东：正常顺序（旋转由实体朝向处理）
+            case "WEST" -> FRAME_WIDTH - 1 - x;   // 朝西：X轴翻转
+            default -> x;
+        };
+        
+        return y * FRAME_WIDTH + adjustedX;
+    }
+
+    /**
+     * 根据朝向调整帧数据读取坐标
+     * 现在简化为直接使用原始坐标，因为像素位置已经在getPixelTranslation中正确调整
+     * @param screenX 屏幕X坐标（实体位置）
+     * @param screenY 屏幕Y坐标（实体位置）
+     * @return 原始帧数据坐标 [frameX, frameY]
+     */
+    private int[] getFrameDataCoordinates(int screenX, int screenY) {
+        // 简化逻辑：直接使用原始坐标，因为实体位置已经正确调整
+        return new int[]{screenX, screenY};
     }
 
     private TextDisplay createPixelEntity(World world, int backgroundColor, Vector3f translation, Quaternionf rotation) {
@@ -242,17 +351,20 @@ public class VideoPlayer {
      */
     private void clearTextDisplayEntities() {
         if (!textDisplayPairs.isEmpty()) {
-            plugin.getLogger().info("正在清除 " + textDisplayPairs.size() * 2 + " 个背靠背 TextDisplay 实体...");
+            int totalEntities = 0;
             for (TextDisplayPair pair : textDisplayPairs) {
                 if (pair.front != null && !pair.front.isDead()) {
                     pair.front.remove();
+                    totalEntities++;
                 }
                 if (pair.back != null && !pair.back.isDead()) {
                     pair.back.remove();
+                    totalEntities++;
                 }
             }
+            plugin.getLogger().info("正在清除 " + totalEntities + " 个 TextDisplay 实体...");
             textDisplayPairs.clear();
-            plugin.getLogger().info("背靠背 TextDisplay 实体清除完成！");
+            plugin.getLogger().info("TextDisplay 实体清除完成！");
         }
     }
 
@@ -277,12 +389,31 @@ public class VideoPlayer {
         @Override
         public void run() {
             if (currentFrame >= frames.size()) {
+                // 播放完毕，停止播放
                 isPlaying = false;
                 plugin.setPlaying(false);
                 currentPlaybackTask = null; // 清理任务引用
-                // if ("text".equals(playMode)) {
-                //     clearTextDisplayEntities();
-                // }
+                
+                // 根据配置决定是否清理（播放完毕）
+                boolean shouldClear = false;
+                if ("block".equals(playMode)) {
+                    shouldClear = plugin.isBlockClearOnComplete();
+                } else if ("text".equals(playMode)) {
+                    shouldClear = plugin.isTextClearOnComplete();
+                }
+                
+                if (shouldClear) {
+                    if ("text".equals(playMode)) {
+                        clearTextDisplayEntities();
+                        plugin.getLogger().info("[VideoPlayer] 播放完毕 - 已清理 Text 模式的文本展示实体");
+                    } else {
+                        clearBlocks();
+                        plugin.getLogger().info("[VideoPlayer] 播放完毕 - 已清理 Block 模式的方块");
+                    }
+                } else {
+                    plugin.getLogger().info("[VideoPlayer] 播放完毕 - 根据配置保留当前画面");
+                }
+                
                 plugin.getLogger().info("Bad Apple 视频播放完成！");
                 cancel();
                 return;
@@ -311,19 +442,35 @@ public class VideoPlayer {
         final int WHITE_ARGB = 0xFFFFFFFF; // 白色，完全不透明
         final int BLACK_ARGB = 0xFF000000; // 黑色，完全不透明
 
-        for (int y = 0; y < FRAME_HEIGHT; y++) {
-            for (int x = 0; x < FRAME_WIDTH; x++) {
-                int pixelIndex = y * FRAME_WIDTH + x;
+        for (int screenY = 0; screenY < FRAME_HEIGHT; screenY++) {
+            for (int screenX = 0; screenX < FRAME_WIDTH; screenX++) {
+                // 计算屏幕上的像素索引（实体在数组中的位置）
+                int pixelIndex = screenY * FRAME_WIDTH + screenX;
                 TextDisplayPair pair = textDisplayPairs.get(pixelIndex);
-                byte pixelValue = frameData[y][x];
-
-                // 根据像素值直接设置背景颜色，同时更新正面和背面
-                int backgroundColor = (pixelValue == 1) ? WHITE_ARGB : BLACK_ARGB;
-                org.bukkit.Color color = org.bukkit.Color.fromARGB(backgroundColor);
                 
-                // 同时更新正面和背面实体的颜色
-                pair.front.setBackgroundColor(color);
-                pair.back.setBackgroundColor(color);
+                // 根据朝向获取对应的帧数据坐标
+                int[] frameCoords = getFrameDataCoordinates(screenX, screenY);
+                int frameX = frameCoords[0];
+                int frameY = frameCoords[1];
+                
+                // 确保坐标在有效范围内
+                if (frameX >= 0 && frameX < FRAME_WIDTH && frameY >= 0 && frameY < FRAME_HEIGHT) {
+                    byte pixelValue = frameData[frameY][frameX];
+
+                    // 根据像素值设置背景颜色
+                    int backgroundColor = (pixelValue == 1) ? WHITE_ARGB : BLACK_ARGB;
+                    org.bukkit.Color color = org.bukkit.Color.fromARGB(backgroundColor);
+                    
+                    // 更新正面实体
+                    if (pair.front != null) {
+                        pair.front.setBackgroundColor(color);
+                    }
+                    
+                    // 如果是双面模式，同时更新背面实体
+                    if (pair.isBothSide() && pair.back != null) {
+                        pair.back.setBackgroundColor(color);
+                    }
+                }
             }
         }
     }
@@ -348,12 +495,13 @@ public class VideoPlayer {
         return isPlaying;
     }
 
-    /**
+        /**
      * 停止播放并清理资源。
      * @param mode 播放模式。
      * @param preserveFrame 是否保留当前画面。
+     * @param isManualStop 是否为手动停止（true=手动停止，false=播放完毕）
      */
-    public void stopPlayback(String mode, boolean preserveFrame) {
+    public void stopPlayback(String mode, boolean preserveFrame, boolean isManualStop) {
         if (!isPlaying) return;
         
         isPlaying = false;
@@ -365,17 +513,41 @@ public class VideoPlayer {
             currentPlaybackTask = null;
         }
         
-        if (preserveFrame) {
-            plugin.getLogger().info("已停止 " + ("text".equals(mode) ? "Text" : "Block") + " 模式播放并保留当前画面");
-        } else {
+        // 根据配置决定是否清理
+        boolean shouldClear = false;
+        if ("block".equals(mode)) {
+            shouldClear = isManualStop ? plugin.isBlockClearOnStop() : plugin.isBlockClearOnComplete();
+            plugin.getLogger().info("[VideoPlayer] Block模式停止 - " + 
+                (isManualStop ? "手动停止" : "播放完毕") + "，清理配置: " + shouldClear);
+        } else if ("text".equals(mode)) {
+            shouldClear = isManualStop ? plugin.isTextClearOnStop() : plugin.isTextClearOnComplete();
+            plugin.getLogger().info("[VideoPlayer] Text模式停止 - " + 
+                (isManualStop ? "手动停止" : "播放完毕") + "，清理配置: " + shouldClear);
+        }
+        
+        if (shouldClear) {
             if ("text".equals(mode)) {
                 clearTextDisplayEntities();
-                plugin.getLogger().info("已停止 Text 模式播放并清除所有 TextDisplay 实体");
-            } else if ("block".equals(mode)) {
+                plugin.getLogger().info("[VideoPlayer] 已清理 Text 模式的文本展示实体");
+            } else {
                 clearBlocks();
-                plugin.getLogger().info("已停止 Block 模式播放并清除所有方块");
+                plugin.getLogger().info("[VideoPlayer] 已清理 Block 模式的方块");
             }
+        } else {
+            plugin.getLogger().info("[VideoPlayer] 根据配置保留当前画面");
         }
+        
+        plugin.getLogger().info("Bad Apple 视频播放已停止 (模式: " + mode + ")");
+    }
+    
+    /**
+     * 停止播放并清理资源。
+     * @param mode 播放模式。
+     * @param preserveFrame 是否保留当前画面。
+     */
+    public void stopPlayback(String mode, boolean preserveFrame) {
+        // 向后兼容，默认为手动停止
+        stopPlayback(mode, preserveFrame, true);
     }
     
     /**

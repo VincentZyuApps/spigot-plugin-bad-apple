@@ -69,7 +69,7 @@ public class ButtonControlListener implements Listener {
                 return;
             }
             
-            player.stopPlayback("text", true); // 保留当前画面，不清除实体
+            player.stopPlayback("text", true, true); // 第三个参数表示手动停止
             plugin.resetCooldown("text"); // 重置 text 模式的冷却时间
             
             // 只有启用音频时才停止声音
@@ -133,7 +133,7 @@ public class ButtonControlListener implements Listener {
                     return;
                 }
                 
-                player.stopPlayback("block", true); // 保留当前画面，不清除方块
+                player.stopPlayback("block", true, true); // 第三个参数表示手动停止
                 plugin.resetCooldown("block"); // 重置 block 模式的冷却时间
                 
                 // 只有启用音频时才停止声音
