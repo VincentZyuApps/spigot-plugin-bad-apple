@@ -15,16 +15,32 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     private static SpigotPluginBadApple instance;
     private boolean isPlaying = false;
     private long lastPlayTime = 0;
+    
+    // 分别针对 text 和 block 模式的冷却时间
+    private long lastTextPlayTime = 0;
+    private long lastBlockPlayTime = 0;
+    
     private Location wallPosition;
     private String wallDirection;
     private Location textPosition; // text模式的位置
     private String textDirection;  // text模式的方向
     private boolean videoEnabled;
     private int cooldownSeconds;
+    private boolean enableAudio;
     private debugTextDisplayChessCommand chessCommand;
     private VideoPlayer videoPlayer;
     // Button controls
     private int soundDelayTicks;
+    
+    // Trigger configurations
+    private boolean blockCommandStartEnabled;
+    private boolean blockCommandStopEnabled;
+    private boolean blockPressurePlateStartEnabled;
+    private boolean blockPressurePlateStopEnabled;
+    private boolean textCommandStartEnabled;
+    private boolean textCommandStopEnabled;
+    private boolean textButtonStartEnabled;
+    private boolean textButtonStopEnabled;
 
     @Override
     public void onEnable() {
@@ -90,27 +106,42 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         reloadConfig();
         
         // 读取墙体位置配置 (block模式)
-        int x = getConfig().getInt("video_wall.position.x", 0);
-        int y = getConfig().getInt("video_wall.position.y", 64);
-        int z = getConfig().getInt("video_wall.position.z", 0);
+        double x = getConfig().getDouble("video_wall.position.x", 0.0);
+        double y = getConfig().getDouble("video_wall.position.y", 64.0);
+        double z = getConfig().getDouble("video_wall.position.z", 0.0);
         wallPosition = new Location(getServer().getWorlds().get(0), x, y, z);
         wallDirection = getConfig().getString("video_wall.direction", "NORTH");
         
         // 读取文本展示位置配置 (text模式)
-        int textX = getConfig().getInt("video_text.position.x", 100);
-        int textY = getConfig().getInt("video_text.position.y", 64);
-        int textZ = getConfig().getInt("video_text.position.z", 100);
+        double textX = getConfig().getDouble("video_text.position.x", 100.0);
+        double textY = getConfig().getDouble("video_text.position.y", 64.0);
+        double textZ = getConfig().getDouble("video_text.position.z", 100.0);
         textPosition = new Location(getServer().getWorlds().get(0), textX, textY, textZ);
         textDirection = getConfig().getString("video_text.direction", "NORTH");
         
         // 读取播放设置
         videoEnabled = getConfig().getBoolean("playback.enabled", true);
         cooldownSeconds = getConfig().getInt("playback.cooldown", 235);
+        enableAudio = getConfig().getBoolean("playback.enableAudio", true);
 
         // 读取按钮控制配置
-        soundDelayTicks = getConfig().getInt("controls.sound_delay_ticks", 10);        getLogger().info("配置已加载:");
+        soundDelayTicks = getConfig().getInt("controls.sound_delay_ticks", 10);
+        
+        // 读取触发方式配置
+        blockCommandStartEnabled = getConfig().getBoolean("triggers.block.command_start_enabled", true);
+        blockCommandStopEnabled = getConfig().getBoolean("triggers.block.command_stop_enabled", true);
+        blockPressurePlateStartEnabled = getConfig().getBoolean("triggers.block.pressure_plate_start_enabled", true);
+        blockPressurePlateStopEnabled = getConfig().getBoolean("triggers.block.pressure_plate_stop_enabled", true);
+        
+        textCommandStartEnabled = getConfig().getBoolean("triggers.text.command_start_enabled", true);
+        textCommandStopEnabled = getConfig().getBoolean("triggers.text.command_stop_enabled", true);
+        textButtonStartEnabled = getConfig().getBoolean("triggers.text.button_start_enabled", true);
+        textButtonStopEnabled = getConfig().getBoolean("triggers.text.button_stop_enabled", true);
+        
+        getLogger().info("配置已加载:");
         getLogger().info("Block模式 - 墙体位置(" + x + "," + y + "," + z + "), 朝向: " + wallDirection);
         getLogger().info("Text模式 - 墙体位置(" + textX + "," + textY + "," + textZ + "), 朝向: " + textDirection);
+        getLogger().info("触发方式配置已加载完成");
     }
     
     public boolean isPlaying() {
@@ -131,6 +162,58 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         long currentTime = System.currentTimeMillis();
         long timePassed = (currentTime - lastPlayTime) / 1000; // 转换为秒
         return timePassed >= cooldownSeconds;
+    }
+    
+    /**
+     * 检查指定模式是否可以播放（考虑模式特定的冷却时间）
+     */
+    public boolean canPlay(String mode) {
+        if (!videoEnabled) return false;
+        
+        long currentTime = System.currentTimeMillis();
+        if ("text".equals(mode)) {
+            long timePassed = (currentTime - lastTextPlayTime) / 1000;
+            return timePassed >= cooldownSeconds;
+        } else if ("block".equals(mode)) {
+            long timePassed = (currentTime - lastBlockPlayTime) / 1000;
+            return timePassed >= cooldownSeconds;
+        }
+        return canPlay(); // 后备方案
+    }
+    
+    /**
+     * 设置指定模式开始播放
+     */
+    public void setPlaying(String mode, boolean playing) {
+        this.isPlaying = playing;
+        if (playing) {
+            long currentTime = System.currentTimeMillis();
+            this.lastPlayTime = currentTime;
+            
+            if ("text".equals(mode)) {
+                this.lastTextPlayTime = currentTime;
+            } else if ("block".equals(mode)) {
+                this.lastBlockPlayTime = currentTime;
+            }
+        }
+    }
+    
+    /**
+     * 获取指定模式的剩余冷却时间（秒）
+     */
+    public double getRemainingCooldown(String mode) {
+        long currentTime = System.currentTimeMillis();
+        double timePassed;
+        
+        if ("text".equals(mode)) {
+            timePassed = (currentTime - lastTextPlayTime) / 1000.0;
+        } else if ("block".equals(mode)) {
+            timePassed = (currentTime - lastBlockPlayTime) / 1000.0;
+        } else {
+            timePassed = (currentTime - lastPlayTime) / 1000.0;
+        }
+        
+        return Math.max(0, cooldownSeconds - timePassed);
     }
     
     public Location getWallPosition() {
@@ -166,8 +249,35 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         this.isPlaying = false;
         this.lastPlayTime = 0;
     }
+    
+    /**
+     * 重置指定模式的冷却时间
+     */
+    public void resetCooldown(String mode) {
+        this.isPlaying = false;
+        this.lastPlayTime = 0;
+        
+        if ("text".equals(mode)) {
+            this.lastTextPlayTime = 0;
+        } else if ("block".equals(mode)) {
+            this.lastBlockPlayTime = 0;
+        }
+    }
 
     public VideoPlayer getVideoPlayer() { return videoPlayer; }
     public int getSoundDelayTicks() { return soundDelayTicks; }
+    public boolean isAudioEnabled() { return enableAudio; }
+    
+    // Block 模式触发配置
+    public boolean isBlockCommandStartEnabled() { return blockCommandStartEnabled; }
+    public boolean isBlockCommandStopEnabled() { return blockCommandStopEnabled; }
+    public boolean isBlockPressurePlateStartEnabled() { return blockPressurePlateStartEnabled; }
+    public boolean isBlockPressurePlateStopEnabled() { return blockPressurePlateStopEnabled; }
+    
+    // Text 模式触发配置
+    public boolean isTextCommandStartEnabled() { return textCommandStartEnabled; }
+    public boolean isTextCommandStopEnabled() { return textCommandStopEnabled; }
+    public boolean isTextButtonStartEnabled() { return textButtonStartEnabled; }
+    public boolean isTextButtonStopEnabled() { return textButtonStopEnabled; }
 
 }

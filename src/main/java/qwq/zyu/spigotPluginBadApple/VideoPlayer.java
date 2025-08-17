@@ -121,7 +121,7 @@ public class VideoPlayer {
 
         Runnable startPlaybackTask = () -> {
             isPlaying = true;
-            plugin.setPlaying(true);
+            plugin.setPlaying(playMode, true);
             plugin.getLogger().info("开始播放 Bad Apple 视频 (模式: " + playMode + ")，共 " + frames.size() + " 帧");
             
             // 如果是 text 模式，输出左下角像素格子中心坐标
@@ -156,7 +156,7 @@ public class VideoPlayer {
         World world = wallPosition.getWorld();
         if (world == null) return;
 
-        plugin.getLogger().info("开始异步创建 " + (FRAME_WIDTH * FRAME_HEIGHT * 2) + " 个背靠背 TextDisplay 实体...");
+        plugin.getLogger().info("开始异步创建 " + (FRAME_WIDTH * FRAME_HEIGHT * 2) + " 个背靠背 TextDisplay 实体（已添加 bad_apple 和 screen 标签）...");
 
         new BukkitRunnable() {
             private int x = 0;
@@ -209,6 +209,10 @@ public class VideoPlayer {
     private TextDisplay createPixelEntity(World world, int backgroundColor, Vector3f translation, Quaternionf rotation) {
         return world.spawn(wallPosition, TextDisplay.class, (e) -> {
             e.setText(" ");
+            
+            // 添加两个标签，方便命令方块管理
+            e.addScoreboardTag("bad_apple");
+            e.addScoreboardTag("screen");
             
             // 使用 reflection 或者直接通过 NBT 设置 background 属性
             // 这里我们使用 Bukkit API 的 setBackgroundColor，但传入 ARGB 格式的颜色

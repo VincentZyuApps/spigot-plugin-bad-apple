@@ -14,9 +14,9 @@ video_wall:
 video_text:
   # 文本展示左下角的坐标
   position:
-    x: 10
-    y: -60
-    z: 10
+    x: 10.1
+    y: -60.2
+    z: 10.3
   # 墙体朝向 (NORTH, SOUTH, EAST, WEST)
   direction: NORTH
   
@@ -26,9 +26,35 @@ playback:
   enabled: true
   # 播放冷却时间（秒）
   cooldown: 235  # 3分55秒
+  # 是否启用音频播放控制
+  enableAudio: true
 
 # 按钮控制：使用两个按钮控制播放/停止（text 模式）
 controls:
   # 声音延迟（tick）。例如10 tick ≈ 0.5秒
-  sound_delay_ticks: 10
+  sound_delay_ticks: 0
+
+# 触发方式配置
+triggers:
+  # Block 模式触发配置
+  block:
+    # 允许通过指令触发 block 模式的开始
+    command_start_enabled: true
+    # 允许通过指令触发 block 模式的停止
+    command_stop_enabled: true
+    # 允许通过压力板触发 block 模式的开始
+    pressure_plate_start_enabled: true
+    # 允许通过压力板触发 block 模式的停止
+    pressure_plate_stop_enabled: true
+  
+  # Text 模式触发配置
+  text:
+    # 允许通过指令触发 text 模式的开始
+    command_start_enabled: true
+    # 允许通过指令触发 text 模式的停止
+    command_stop_enabled: true
+    # 允许通过按钮触发 text 模式的开始
+    button_start_enabled: true
+    # 允许通过按钮触发 text 模式的停止
+    button_stop_enabled: true
 
