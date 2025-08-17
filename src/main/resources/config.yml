@@ -1,12 +1,22 @@
 # Bad Apple Plugin Configuration
 
-# 视频播放墙体配置
+# 视频播放墙体配置 (block模式)
 video_wall:
   # 墙体左下角方块的坐标
   position:
     x: 0
     y: 64
     z: 0
+  # 墙体朝向 (NORTH, SOUTH, EAST, WEST)
+  direction: NORTH
+
+# 视频播放文本展示配置 (text模式)
+video_text:
+  # 文本展示左下角的坐标
+  position:
+    x: 10
+    y: -60
+    z: 10
   # 墙体朝向 (NORTH, SOUTH, EAST, WEST)
   direction: NORTH
   
@@ -16,3 +26,9 @@ playback:
   enabled: true
   # 播放冷却时间（秒）
   cooldown: 235  # 3分55秒
+
+# 按钮控制：使用两个按钮控制播放/停止（text 模式）
+controls:
+  # 声音延迟（tick）。例如10 tick ≈ 0.5秒
+  sound_delay_ticks: 10
+
