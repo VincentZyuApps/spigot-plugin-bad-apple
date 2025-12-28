@@ -1,6 +1,12 @@
 # Bad Apple Plugin Configuration
 
-# 视频播放墙体配置
+# 全局画面设置
+video_settings:
+  # 是否在读取bin文件时进行水平翻转（镜像）
+  # true: 画面左右翻转，false: 保持原始画面
+  horizontal_flip: true
+
+# 视频播放墙体配置 (block模式)
 video_wall:
   # 墙体左下角方块的坐标
   position:
@@ -9,6 +15,18 @@ video_wall:
     z: 0
   # 墙体朝向 (NORTH, SOUTH, EAST, WEST)
   direction: NORTH
+
+# 视频播放文本展示配置 (text模式)
+video_text:
+  # 文本展示左下角的坐标
+  position:
+    x: 10.1
+    y: -60.2
+    z: 10.3
+  # 墙体朝向 (NORTH, SOUTH, EAST, WEST)
+  direction: NORTH
+  # 是否启用双面显示（背靠背实体）
+  enableBothSide: false
   
 # 播放设置
 playback:
@@ -16,3 +34,51 @@ playback:
   enabled: true
   # 播放冷却时间（秒）
   cooldown: 235  # 3分55秒
+  # 是否启用音频播放控制
+  enableAudio: true
+
+# 清理设置
+cleanup:
+  # Block 模式清理配置
+  block:
+    # 播放完毕后是否清除方块（3分55秒后）
+    clear_on_complete: false
+    # 手动停止播放后是否清除方块（stop命令或黑色压力板）
+    clear_on_stop: false
+  
+  # Text 模式清理配置
+  text:
+    # 播放完毕后是否清除文本展示实体（3分55秒后）
+    clear_on_complete: true
+    # 手动停止播放后是否清除文本展示实体（stop命令或黑色按钮）
+    clear_on_stop: true
+
+# 按钮控制：使用两个按钮控制播放/停止（text 模式）
+controls:
+  # 声音延迟（tick）。例如10 tick ≈ 0.5秒
+  sound_delay_ticks: 1
+
+# 触发方式配置
+triggers:
+  # Block 模式触发配置
+  block:
+    # 允许通过指令触发 block 模式的开始
+    command_start_enabled: true
+    # 允许通过指令触发 block 模式的停止
+    command_stop_enabled: true
+    # 允许通过压力板触发 block 模式的开始
+    pressure_plate_start_enabled: true
+    # 允许通过压力板触发 block 模式的停止
+    pressure_plate_stop_enabled: true
+  
+  # Text 模式触发配置
+  text:
+    # 允许通过指令触发 text 模式的开始
+    command_start_enabled: true
+    # 允许通过指令触发 text 模式的停止
+    command_stop_enabled: true
+    # 允许通过按钮触发 text 模式的开始
+    button_start_enabled: true
+    # 允许通过按钮触发 text 模式的停止
+    button_stop_enabled: true
+

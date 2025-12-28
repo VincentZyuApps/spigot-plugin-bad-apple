@@ -1,15 +1,20 @@
 name: spigot-plugin-bad-apple
-version: '0.1.0-alpha4'
+version: '0.2.4-alpha19'
 main: qwq.zyu.spigotPluginBadApple.SpigotPluginBadApple
 api-version: '1.21'
 
 commands:
   play_bad_apple:
     description: 播放bad_apple
-    usage: /play_bad_apple [模式] (默认模式: block)
+    usage: "/play_bad_apple [模式] (默认模式: text, 支持: text, block)"
+  stop_bad_apple:
+    description: 停止播放bad_apple并清空CD
+    usage: "/stop_bad_apple <text|block>"
   debug_text_display_chess:
     description: 创建3x3文本展示实体棋盘用于调试
-    usage: /debug_text_display_chess
+    usage: "/debug_text_display_chess [squareSize] [scaleMultiplier]"
   clear_chess_debug:
     description: 清除调试创建的棋盘实体
     usage: /clear_chess_debug
+
+  

@@ -42,9 +42,9 @@ cleanup:
   # Block 模式清理配置
   block:
     # 播放完毕后是否清除方块（3分55秒后）
-    clear_on_complete: true
+    clear_on_complete: false
     # 手动停止播放后是否清除方块（stop命令或黑色压力板）
-    clear_on_stop: true
+    clear_on_stop: false
   
   # Text 模式清理配置
   text:
@@ -56,7 +56,7 @@ cleanup:
 # 按钮控制：使用两个按钮控制播放/停止（text 模式）
 controls:
   # 声音延迟（tick）。例如10 tick ≈ 0.5秒
-  sound_delay_ticks: 0
+  sound_delay_ticks: 1
 
 # 触发方式配置
 triggers:

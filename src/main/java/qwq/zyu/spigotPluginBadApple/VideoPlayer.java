@@ -512,18 +512,27 @@ public class VideoPlayer {
         }
     }
 
-    /**
+        /**
      * 渲染方块模式的视频帧。
-     * @param frameData 帧数据。
+     * @param frameData 已裁剪的帧数据。
      */
     private void renderFrameBlock(byte[][] frameData) {
         World world = wallPosition.getWorld();
         if (world == null) return;
-        for (int y = 0; y < FRAME_HEIGHT; y++) {
-            for (int x = 0; x < FRAME_WIDTH; x++) {
-                Location blockLoc = getBlockLocation(x, y);
+        
+        // 现在 frameData 是裁剪后的数据，尺寸为 DISPLAY_WIDTH × DISPLAY_HEIGHT
+        for (int y = 0; y < DISPLAY_HEIGHT; y++) {
+            for (int x = 0; x < DISPLAY_WIDTH; x++) {
+                // 计算在原始坐标系中的位置（考虑裁剪偏移），用于确定方块位置
+                int originalX = x + CROP_LEFT;
+                int originalY = y + CROP_TOP;
+                
+                Location blockLoc = getBlockLocation(originalX, originalY);
+                Block block = world.getBlockAt(blockLoc);
+                
+                // 直接使用裁剪后的坐标访问frameData
                 Material material = (frameData[y][x] == 1) ? Material.WHITE_CONCRETE : Material.BLACK_CONCRETE;
-                world.getBlockAt(blockLoc).setType(material, false);
+                block.setType(material);
             }
         }
     }
@@ -602,9 +611,14 @@ public class VideoPlayer {
         World world = wallPosition.getWorld();
         if (world == null) return;
         
-        for (int y = 0; y < FRAME_HEIGHT; y++) {
-            for (int x = 0; x < FRAME_WIDTH; x++) {
-                Location blockLoc = getBlockLocation(x, y);
+        // 清除裁剪后的显示区域
+        for (int y = 0; y < DISPLAY_HEIGHT; y++) {
+            for (int x = 0; x < DISPLAY_WIDTH; x++) {
+                // 计算在原始坐标系中的位置（考虑裁剪偏移）
+                int originalX = x + CROP_LEFT;
+                int originalY = y + CROP_TOP;
+                
+                Location blockLoc = getBlockLocation(originalX, originalY);
                 world.getBlockAt(blockLoc).setType(Material.AIR, false);
             }
         }
