@@ -8,12 +8,21 @@
 > 🎬 Minecraft Spigot 服务端插件，可灵活配置。用方块或 TextDisplay 实体在游戏内播放 Bad Apple 视频。🍎✨
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple)
+[![Gitee](https://img.shields.io/badge/Gitee-C71D23?style=for-the-badge&logo=gitee&logoColor=white)](https://gitee.com/vincent-zyu/spigot-plugin-bad-apple)
 
 [![Spigot](https://img.shields.io/badge/Spigot-1.21.8-ED8106?style=for-the-badge&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/)
 [![Paper](https://img.shields.io/badge/Paper-1.21.8-0A0A0A?style=for-the-badge&logo=papermc&logoColor=white)](https://papermc.io/)
 
 [![Java](https://img.shields.io/badge/Java-21-007396?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Gradle](https://img.shields.io/badge/Gradle-8.8-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org)
+[![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions)
+[![Release](https://img.shields.io/github/v/release/VincentZyuApps/spigot-plugin-bad-apple?style=for-the-badge&logo=github)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases)
+[![Downloads](https://img.shields.io/github/downloads/VincentZyuApps/spigot-plugin-bad-apple/total?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases)
+
+[![QQ Group](https://img.shields.io/badge/QQ_Group-1085190201-12B7F5?style=flat-square&logo=qq&logoColor=white)](https://qm.qq.com/q/4vjto4V7Di)
+
+<p>💬 插件使用问题 / 🐛 Bug反馈 / 👨‍💻 开发交流，欢迎加QQ群：<b>1085190201</b> 🎉</p>
+<p>💡 群里直接艾特我，回复更快 ~ ✨</p>
 
 ---
 
@@ -40,9 +49,9 @@
 
 | | |
 |---|---|
-| 🎯 **服务端类型** | Spigot / Paper |
-| 🌎 **测试 API** | **1.21.8** |
-| 📦 **运行环境** | Java 21 |
+| 🎯 **服务端类型** | [![Spigot](https://img.shields.io/badge/Spigot-1.21.8-ED8106?style=flat-square&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/) [![Paper](https://img.shields.io/badge/Paper-1.21.8-0A0A0A?style=flat-square&logo=papermc&logoColor=white)](https://papermc.io/) |
+| 🌎 **测试 API** | ![API](https://img.shields.io/badge/1.21.8-ED8106?style=flat-square&logo=minecraft&logoColor=white) |
+| 📦 **运行环境** | ![Java 21](https://img.shields.io/badge/Java_21-007396?style=flat-square&logo=openjdk&logoColor=white) |
 
 ---
 
@@ -50,87 +59,108 @@
 
 | | |
 |---|---|
-| 🧱 **服务端 API** | [![Spigot API](https://img.shields.io/badge/Spigot_API_1.21.8-ED8106?style=for-the-badge&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/) |
-| 📝 **语言** | [![Java](https://img.shields.io/badge/Java-21-007396?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/) |
-| 🏗 **构建** | [![Gradle](https://img.shields.io/badge/Gradle-8.8-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org) |
+| 🧱 **服务端 API** | [![Spigot 1.21.8](https://img.shields.io/badge/Spigot_API_1.21.8-ED8106?style=flat-square&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/) |
+| 📝 **语言** | [![Java 21](https://img.shields.io/badge/Java_21-007396?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/) |
+| 🏗 **构建** | [![Gradle 8.8](https://img.shields.io/badge/Gradle_8.8-02303A?style=flat-square&logo=gradle&logoColor=white)](https://gradle.org) |
+| 🔄 **CI** | [![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions) |
 
 ---
 
 ## 📦 下载与安装
 
 [![Download](https://img.shields.io/badge/Download-GitHub_Releases-ED8106?style=for-the-badge&logo=spigotmc&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases)
+[![Music Pack](https://img.shields.io/badge/Music_Pack-Resource_Pack_Release-1DB954?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/bad-apple-music-resource-pack)
 
 将生成好的 `.jar` 文件放进服务器 `plugins/` 目录后重启即可。
+如果你需要音频播放，还需要额外下载资源包 Release：[bad-apple-music-resource-pack](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/bad-apple-music-resource-pack)。
 
 默认配置如下：
 
 ```yml
-# Bad Apple Plugin Configuration
+# 🎬🍎 Bad Apple Plugin Configuration 🧱📝
 
-# 全局画面设置
+# 🎥 全局画面设置 📺
 video_settings:
-  # 读取 bin 压缩包时是否做水平镜像
-  # true: 左右翻转，false: 保持原始方向
+  # 🔄 是否在读取bin文件时进行水平翻转（镜像）
+  # true: 画面左右翻转，false: 保持原始画面
   horizontal_flip: true
 
-# 方块模式视频墙配置
+# 🧱 视频播放墙体配置 (block模式) 🧊
 video_wall:
-  # 墙体左下角方块坐标
+  # 📍 墙体左下角方块的坐标
   position:
     x: -20
     y: 0
     z: -70
-  # 墙体朝向 (NORTH, SOUTH, EAST, WEST)
+  # 🧭 墙体朝向 (NORTH, SOUTH, EAST, WEST)
   direction: NORTH
 
-# 文本模式视频屏幕配置
+# 📝 视频播放文本展示配置 (text模式) 🖥️
 video_text:
-  # 文本展示左下角锚点坐标
+  # 📍 文本展示左下角的坐标
   position:
     x: 44.5
     y: -51.13
     z: -18.913
-  # 墙体朝向 (NORTH, SOUTH, EAST, WEST)
+  # 🧭 墙体朝向 (NORTH, SOUTH, EAST, WEST)
   direction: SOUTH
-  # 是否启用背靠背双面显示
+  # 🔄 是否启用双面显示（背靠背实体）
   enableBothSide: false
-
-# 播放设置
+  
+# ▶️ 播放设置 ⏱️
 playback:
-  # 是否启用播放功能
+  # ✅ 是否启用视频播放功能
   enabled: true
-  # 播放冷却时间（秒）
-  cooldown: 235
-  # 是否启用音频控制
+  # ⏳ 播放冷却时间（秒）
+  cooldown: 235  # ⏰ 3分55秒
+  # 🔊 是否启用音频播放控制
   enableAudio: false
-  # playsound/stopsound 使用的资源包声音 ID
+  # 🆔 资源包中的声音 ID，例如 niacl:music_disc.bad_apple
   audioSoundId: niacl:music_disc.bad_apple
 
-# 清理设置
+# 🧹 清理设置 🗑️
 cleanup:
+  # 🧊 Block 模式清理配置
   block:
+    # ✅ 播放完毕后是否清除方块（3分55秒后）
     clear_on_complete: true
+    # 🛑 手动停止播放后是否清除方块（stop命令或黑色压力板）
     clear_on_stop: true
+  
+  # 🖥️ Text 模式清理配置
   text:
+    # ✅ 播放完毕后是否清除文本展示实体（3分55秒后）
     clear_on_complete: true
+    # 🛑 手动停止播放后是否清除文本展示实体（stop命令或黑色按钮）
     clear_on_stop: true
 
-# 文本模式按钮控制
+# 🔘 按钮控制：使用两个按钮控制播放/停止（text 模式）
 controls:
-  # 音频延迟（tick）
+  # 🔇 声音延迟（tick）。例如10 tick ≈ 0.5秒
   sound_delay_ticks: 1
 
-# 触发开关
+# 🎮 触发方式配置 ⚡
 triggers:
+  # 🧊 Block 模式触发配置
   block:
+    # ⌨️ 允许通过指令触发 block 模式的开始
     command_start_enabled: true
+    # ⌨️ 允许通过指令触发 block 模式的停止
     command_stop_enabled: true
+    # 🟫 允许通过压力板触发 block 模式的开始
     pressure_plate_start_enabled: true
+    # 🟫 允许通过压力板触发 block 模式的停止
     pressure_plate_stop_enabled: true
+  
+  # 🖥️ Text 模式触发配置
   text:
+    # ⌨️ 允许通过指令触发 text 模式的开始
     command_start_enabled: true
+    # ⌨️ 允许通过指令触发 text 模式的停止
     command_stop_enabled: true
+    # 🔴 允许通过按钮触发 text 模式的开始
     button_start_enabled: true
+    # 🔴 允许通过按钮触发 text 模式的停止
     button_stop_enabled: true
 ```
 
@@ -157,6 +187,8 @@ triggers:
 产物 JAR 会生成在 `build/libs/` 目录下。
 
 ### GitHub Actions
+
+[![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions)
 
 push 到 `main` 或 `master` 时，可以用 commit 关键词控制 CI：
 
