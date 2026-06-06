@@ -5,7 +5,7 @@
 
 # 🎬🍎🧱📝 spigot-plugin-bad-apple
 
-> Play Bad Apple on a Spigot server with block walls or TextDisplay entities.
+> 🎬 A flexible Spigot plugin for playing Bad Apple in Minecraft using blocks or TextDisplay entities. 🍎✨
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple)
 
@@ -36,7 +36,7 @@
 
 ### 🗺️ Support
 
-> Current repository defaults are aligned to the production `0.2.4-rc1` style resource layout and config structure.
+> Current repository defaults are aligned to the production [`0.2.4-rc1`](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/0.2.4-rc1) style resource layout and config structure.
 
 | | |
 |---|---|
@@ -103,6 +103,8 @@ playback:
   cooldown: 235
   # Whether audio control is enabled
   enableAudio: false
+  # Resource-pack sound ID used by playsound/stopsound
+  audioSoundId: niacl:music_disc.bad_apple
 
 # Cleanup settings
 cleanup:
@@ -138,6 +140,7 @@ Config notes:
 - `video_wall.position`: lower-left block coordinate for block playback
 - `video_text.position`: lower-left anchor position for text playback
 - `playback.cooldown`: shared cooldown for replaying the video
+- `playback.audioSoundId`: sound identifier from the client resource pack, including namespace such as `niacl:music_disc.bad_apple`
 - `cleanup.*`: control whether blocks or entities are removed after playback or manual stop
 - `triggers.*`: enable or disable command, pressure plate, and button triggers independently
 

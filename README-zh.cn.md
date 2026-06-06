@@ -5,7 +5,7 @@
 
 # 🎬🍎🧱📝 spigot-plugin-bad-apple
 
-> 在 Spigot 服务器里用方块墙或 TextDisplay 实体播放 Bad Apple。
+> 🎬 Minecraft Spigot 服务端插件，可灵活配置。用方块或 TextDisplay 实体在游戏内播放 Bad Apple 视频。🍎✨
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple)
 
@@ -36,7 +36,7 @@
 
 ### 🗺️ 支持情况
 
-> 当前仓库默认值已经按生产环境 `0.2.4-rc1` 风格对齐到同一套资源布局和配置结构。
+> 当前仓库默认值已经按生产环境 [`0.2.4-rc1`](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/0.2.4-rc1) 风格对齐到同一套资源布局和配置结构。
 
 | | |
 |---|---|
@@ -103,6 +103,8 @@ playback:
   cooldown: 235
   # 是否启用音频控制
   enableAudio: false
+  # playsound/stopsound 使用的资源包声音 ID
+  audioSoundId: niacl:music_disc.bad_apple
 
 # 清理设置
 cleanup:
@@ -138,6 +140,7 @@ triggers:
 - `video_wall.position`：方块模式的左下角方块坐标
 - `video_text.position`：文本模式的左下角锚点坐标
 - `playback.cooldown`：重复播放前的共享冷却时间
+- `playback.audioSoundId`：客户端资源包里的声音标识，需包含命名空间，例如 `niacl:music_disc.bad_apple`
 - `cleanup.*`：控制播放完毕或手动停止后是否清理方块或实体
 - `triggers.*`：分别控制指令、压力板、按钮触发是否启用
 

@@ -56,7 +56,7 @@ public class ButtonControlListener implements Listener {
             if (plugin.isAudioEnabled()) {
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                     plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                            "playsound niacl:music_disc.bad_apple record @a ~ ~ ~ 10000 1.0");
+                            plugin.getPlaySoundCommand());
                 }, delay);
             }
         }
@@ -77,7 +77,7 @@ public class ButtonControlListener implements Listener {
                 // 停止音乐
                 if (e.getPlayer() != null) {
                     plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                            "stopsound @a record niacl:music_disc.bad_apple");
+                            plugin.getStopSoundCommand());
                 }
             }
         }
@@ -118,7 +118,7 @@ public class ButtonControlListener implements Listener {
                 if (plugin.isAudioEnabled()) {
                     plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                         plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                                "playsound niacl:music_disc.bad_apple record @a ~ ~ ~ 10000 1.0");
+                                plugin.getPlaySoundCommand());
                     }, delay);
                 }
                 
@@ -140,7 +140,7 @@ public class ButtonControlListener implements Listener {
                 if (plugin.isAudioEnabled()) {
                     // 停止音乐
                     plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                            "stopsound @a record niacl:music_disc.bad_apple");
+                            plugin.getStopSoundCommand());
                 }
                 
                 e.getPlayer().sendMessage("§c[Bad Apple] 停止播放 Block 模式！");

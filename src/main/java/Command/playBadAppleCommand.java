@@ -94,7 +94,7 @@ public class playBadAppleCommand implements CommandExecutor {
         
         // 对所有在线玩家播放音乐 - text 模式下增加一点延迟以对齐画面
         if (enableAudio) {
-            final String playsoundCmd = "playsound niacl:music_disc.bad_apple record @a ~ ~ ~ 10000 1.0";
+            final String playsoundCmd = plugin.getPlaySoundCommand();
             final int configuredDelay = plugin.getSoundDelayTicks();
             if ("text".equals(playMode)) {
                 int delayTicks = Math.max(0, configuredDelay); // 配置化延迟

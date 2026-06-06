@@ -27,6 +27,7 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     private boolean videoEnabled;
     private int cooldownSeconds;
     private boolean enableAudio;
+    private String audioSoundId;
     private boolean horizontalFlip; // 是否启用水平翻转
     private debugTextDisplayChessCommand chessCommand;
     private VideoPlayer videoPlayer;
@@ -137,6 +138,7 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         videoEnabled = getConfig().getBoolean("playback.enabled", true);
         cooldownSeconds = getConfig().getInt("playback.cooldown", 235);
         enableAudio = getConfig().getBoolean("playback.enableAudio", true);
+        audioSoundId = getConfig().getString("playback.audioSoundId", "niacl:music_disc.bad_apple");
 
         // 读取按钮控制配置
         soundDelayTicks = getConfig().getInt("controls.sound_delay_ticks", 10);
@@ -288,6 +290,13 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     public VideoPlayer getVideoPlayer() { return videoPlayer; }
     public int getSoundDelayTicks() { return soundDelayTicks; }
     public boolean isAudioEnabled() { return enableAudio; }
+    public String getAudioSoundId() { return audioSoundId; }
+    public String getPlaySoundCommand() {
+        return "playsound " + audioSoundId + " record @a ~ ~ ~ 10000 1.0";
+    }
+    public String getStopSoundCommand() {
+        return "stopsound @a record " + audioSoundId;
+    }
     
     // Block 模式触发配置
     public boolean isBlockCommandStartEnabled() { return blockCommandStartEnabled; }

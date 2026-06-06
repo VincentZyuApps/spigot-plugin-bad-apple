@@ -36,6 +36,8 @@ playback:
   cooldown: 235  # 3分55秒
   # 是否启用音频播放控制
   enableAudio: true
+  # 资源包中的声音 ID，例如 niacl:music_disc.bad_apple
+  audioSoundId: niacl:music_disc.bad_apple
 
 # 清理设置
 cleanup:
