@@ -10,14 +10,12 @@
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple)
 [![Gitee](https://img.shields.io/badge/Gitee-C71D23?style=for-the-badge&logo=gitee&logoColor=white)](https://gitee.com/vincent-zyu/spigot-plugin-bad-apple)
 
-[![Spigot](https://img.shields.io/badge/Spigot-1.21.8-ED8106?style=for-the-badge&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/)
-[![Paper](https://img.shields.io/badge/Paper-1.21.8-0A0A0A?style=for-the-badge&logo=papermc&logoColor=white)](https://papermc.io/)
+[![Spigot](./docs/images/badge/spigot.svg)](https://www.spigotmc.org/)
+[![Paper](./docs/images/badge/paper.svg)](https://papermc.io/)
 
 [![Java](https://img.shields.io/badge/Java-21-007396?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Gradle](https://img.shields.io/badge/Gradle-8.8-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org)
 [![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions)
-[![Release](https://img.shields.io/github/v/release/VincentZyuApps/spigot-plugin-bad-apple?style=for-the-badge&logo=github)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases)
-[![Downloads](https://img.shields.io/github/downloads/VincentZyuApps/spigot-plugin-bad-apple/total?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases)
 
 [![QQ Group](https://img.shields.io/badge/QQ_Group-1085190201-12B7F5?style=flat-square&logo=qq&logoColor=white)](https://qm.qq.com/q/4vjto4V7Di)
 
