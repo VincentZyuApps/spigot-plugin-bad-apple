@@ -1,3 +1,7 @@
+# temp dir
+tmp/
+temp/
+
 # User-specific stuff
 .idea/
 
@@ -117,3 +121,5 @@ runs/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+!src/main/resources/assets/
+!src/main/resources/assets/*.zip

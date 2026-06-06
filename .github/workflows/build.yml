@@ -1,0 +1,170 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    name: Check commit message
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.flags.outputs.should_build }}
+      should_release: ${{ steps.flags.outputs.should_release }}
+      version: ${{ steps.flags.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Parse commit message
+        id: flags
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          MSG="$COMMIT_MSG"
+
+          VERSION="v$(grep '^version' build.gradle | head -1 | sed "s/.*'\(.*\)'.*/\1/")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION"
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          BUILD=false
+          RELEASE=false
+
+          if echo "$MSG" | grep -qi "build release"; then
+            BUILD=true
+            RELEASE=true
+          elif echo "$MSG" | grep -qi "build action"; then
+            BUILD=true
+          fi
+
+          echo "should_build=$BUILD" >> "$GITHUB_OUTPUT"
+          echo "should_release=$RELEASE" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build plugin JAR
+    needs: check
+    if: needs.check.outputs.should_build == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Prepare artifact
+        run: |
+          VERSION="${{ needs.check.outputs.version }}"
+          JAR_FILE=$(find build/libs -maxdepth 1 -type f -name '*.jar' | head -1)
+          ASSET_NAME="spigot-plugin-bad-apple-${VERSION}.jar"
+          cp "$JAR_FILE" "$ASSET_NAME"
+          echo "asset_name=$ASSET_NAME" >> "$GITHUB_ENV"
+          echo "Prepared: $ASSET_NAME"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.asset_name }}
+          path: ${{ env.asset_name }}
+
+  release:
+    name: Publish Release
+    needs: [check, build]
+    if: needs.check.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Delete existing release & tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ needs.check.outputs.version }}"
+          gh release delete "$VERSION" --yes --cleanup-tag 2>/dev/null || echo "No existing release to delete"
+          sleep 3
+
+      - name: Generate release notes from template
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+          REPO: ${{ github.repository }}
+        run: |
+          PREV_TAG=$(git tag --sort=-v:refname | grep -v "^${VERSION}$" | head -1)
+
+          collect_changelog() {
+            local range_args=("$@")
+            git log "${range_args[@]}" --pretty=format:'%s|%h|%an|%ad' --date=format:'%m-%d %H:%M' --reverse \
+              | grep -Evi '^chore: trigger release; build release\|' \
+              | awk -F'|' '{
+                  subj=$1
+                  if (length(subj) > 88) subj=substr(subj, 1, 85) "..."
+                  print subj " (`" $2 "`) - @" $3 " [" $4 "]"
+                }'
+          }
+
+          if [ -n "$PREV_TAG" ]; then
+            collect_changelog "${PREV_TAG}..HEAD" > changelog_raw.txt
+          else
+            collect_changelog > changelog_raw.txt
+          fi
+
+          if [ -s changelog_raw.txt ]; then
+            sed 's/^/> /; G' changelog_raw.txt > changelog_rendered.txt
+          else
+            echo '> No changelog entries.' > changelog_rendered.txt
+          fi
+
+          {
+            while IFS= read -r line || [ -n "$line" ]; do
+              if [ "$line" = "__CHANGE_LOG__" ]; then
+                cat changelog_rendered.txt
+                continue
+              fi
+
+              line="${line//__REPO__/$REPO}"
+              line="${line//__VERSION__/$VERSION}"
+              line="${line//__BRANCH__/${{ github.ref_name }}}"
+              line="${line//__COMMIT_HASH__/${{ github.sha }}}"
+              printf '%s\n' "$line"
+            done < .github/release_template.md
+          } > release_notes.md
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ needs.check.outputs.version }}"
+          JAR_FILE=$(ls spigot-plugin-bad-apple-*.jar | head -1)
+          gh release create "$VERSION" \
+            --title "spigot-plugin-bad-apple ${VERSION}" \
+            --notes-file release_notes.md \
+            --latest \
+            "$JAR_FILE"
