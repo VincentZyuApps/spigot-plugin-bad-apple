@@ -70,6 +70,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
       - name: Build with Gradle
         run: ./gradlew build
 
