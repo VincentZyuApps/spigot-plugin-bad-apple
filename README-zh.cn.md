@@ -39,7 +39,13 @@
 
 ### 🖼️ 效果预览
 
-![Preview](./preview.png)
+> 游戏内客户端截图
+
+![Preview](./docs/images/preview/preview.png)
+
+> 游戏内动态效果预览
+
+<img src="./docs/images/preview/badapple_preview.gif" alt="Bad Apple GIF" width="960" />
 
 ### 🗺️ 支持情况
 

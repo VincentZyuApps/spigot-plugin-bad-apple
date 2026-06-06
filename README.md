@@ -39,7 +39,13 @@
 
 ### 🖼️ Preview
 
-![Preview](./preview.png)
+> In-game client screenshot
+
+![Preview](./docs/images/preview/preview.png)
+
+> Animated in-game preview
+
+<img src="./docs/images/preview/badapple_preview.gif" alt="Bad Apple GIF" width="960" />
 
 ### 🗺️ Support
 
