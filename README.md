@@ -19,6 +19,7 @@
 
 [![QQ Group](https://img.shields.io/badge/QQ_Group-1085190201-12B7F5?style=flat-square&logo=qq&logoColor=white)](https://qm.qq.com/q/4vjto4V7Di)
 
+<p><del>💬 Plugin usage / 🐛 Bug reports / 👨‍💻 Development discussion — Join our QQ Group: <b>259248174</b> 🎉 (This group is gone)</del></p>
 <p>💬 Plugin usage / 🐛 Bug reports / 👨‍💻 Development discussion — Join our QQ Group: <b>1085190201</b> 🎉</p>
 <p>💡 Mention me in the group for faster replies ~ ✨</p>
 
@@ -53,7 +54,7 @@
 
 | | |
 |---|---|
-| 🎯 **Server Type** | [![Spigot](https://img.shields.io/badge/Spigot-1.21.8-ED8106?style=flat-square&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/) [![Paper](https://img.shields.io/badge/Paper-1.21.8-0A0A0A?style=flat-square&logo=papermc&logoColor=white)](https://papermc.io/) |
+| 🎯 **Server Type** | [![Spigot](./docs/images/badge/spigot.svg)](https://www.spigotmc.org/) [![Paper](./docs/images/badge/paper.svg)](https://papermc.io/) |
 | 🌎 **Tested API** | ![API](https://img.shields.io/badge/1.21.8-ED8106?style=flat-square&logo=minecraft&logoColor=white) |
 | 📦 **Runtime** | ![Java 21](https://img.shields.io/badge/Java_21-007396?style=flat-square&logo=openjdk&logoColor=white) |
 
@@ -66,7 +67,7 @@
 | 🧱 **Server API** | [![Spigot 1.21.8](https://img.shields.io/badge/Spigot_API_1.21.8-ED8106?style=flat-square&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/) |
 | 📝 **Language** | [![Java 21](https://img.shields.io/badge/Java_21-007396?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/) |
 | 🏗 **Build** | [![Gradle 8.8](https://img.shields.io/badge/Gradle_8.8-02303A?style=flat-square&logo=gradle&logoColor=white)](https://gradle.org) |
-| 🔄 **CI** | [![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions) |
+| 🔄 **GitHub Action CI** | [![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions) |
 
 ---
 
