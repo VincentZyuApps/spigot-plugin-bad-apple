@@ -46,7 +46,7 @@
 
 > Animated in-game preview
 
-<img src="./docs/images/preview/badapple_preview.gif" alt="Bad Apple GIF" width="960" />
+<img src="./docs/images/preview/preview.gif" alt="Bad Apple GIF" width="960" />
 
 ### 🗺️ Support
 
@@ -55,26 +55,19 @@
 | | |
 |---|---|
 | 🎯 **Server Type** | [![Spigot](./docs/images/badge/spigot.svg)](https://www.spigotmc.org/) [![Paper](./docs/images/badge/paper.svg)](https://papermc.io/) |
-| 🌎 **Tested API** | ![API](https://img.shields.io/badge/1.21.8-ED8106?style=flat-square&logo=minecraft&logoColor=white) |
-| 📦 **Runtime** | ![Java 21](https://img.shields.io/badge/Java_21-007396?style=flat-square&logo=openjdk&logoColor=white) |
-
----
-
-## 🛠 Tech Stack
-
-| | |
-|---|---|
 | 🧱 **Server API** | [![Spigot 1.21.8](https://img.shields.io/badge/Spigot_API_1.21.8-ED8106?style=flat-square&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/) |
 | 📝 **Language** | [![Java 21](https://img.shields.io/badge/Java_21-007396?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/) |
 | 🏗 **Build** | [![Gradle 8.8](https://img.shields.io/badge/Gradle_8.8-02303A?style=flat-square&logo=gradle&logoColor=white)](https://gradle.org) |
-| 🔄 **GitHub Action CI** | [![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions) |
+| 🔄 **CI** | [![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions) |
 
 ---
 
 ## 📦 Download & Install
 
-[![Download](https://img.shields.io/badge/Download-GitHub_Releases-ED8106?style=for-the-badge&logo=spigotmc&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases)
-[![Music Pack](https://img.shields.io/badge/Music_Pack-Resource_Pack_Release-1DB954?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/bad-apple-music-resource-pack)
+| | |
+|---|---|
+| 🧱 **Plugin Jar** | [![Download](https://img.shields.io/badge/Download-GitHub_Releases-ED8106?style=for-the-badge&logo=spigotmc&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases) |
+| 🎵 **Music Pack Zip** | [![Music Pack](https://img.shields.io/badge/Music_Pack-Resource_Pack_Release-1DB954?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/bad-apple-music-resource-pack) |
 
 Place the generated `.jar` file into the server `plugins/` directory and restart the server.
 If you want audio playback, also download the resource pack release: [bad-apple-music-resource-pack](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/bad-apple-music-resource-pack).

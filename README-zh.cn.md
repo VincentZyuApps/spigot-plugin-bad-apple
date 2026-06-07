@@ -46,7 +46,7 @@
 
 > 游戏内动态效果预览
 
-<img src="./docs/images/preview/badapple_preview.gif" alt="Bad Apple GIF" width="960" />
+<img src="./docs/images/preview/preview.gif" alt="Bad Apple GIF" width="960" />
 
 ### 🗺️ 支持情况
 
@@ -55,26 +55,19 @@
 | | |
 |---|---|
 | 🎯 **服务端类型** | [![Spigot](./docs/images/badge/spigot.svg)](https://www.spigotmc.org/) [![Paper](./docs/images/badge/paper.svg)](https://papermc.io/) |
-| 🌎 **测试 API** | ![API](https://img.shields.io/badge/1.21.8-ED8106?style=flat-square&logo=minecraft&logoColor=white) |
-| 📦 **运行环境** | ![Java 21](https://img.shields.io/badge/Java_21-007396?style=flat-square&logo=openjdk&logoColor=white) |
-
----
-
-## 🛠 技术栈
-
-| | |
-|---|---|
 | 🧱 **服务端 API** | [![Spigot 1.21.8](https://img.shields.io/badge/Spigot_API_1.21.8-ED8106?style=flat-square&logo=spigotmc&logoColor=white)](https://www.spigotmc.org/) |
 | 📝 **语言** | [![Java 21](https://img.shields.io/badge/Java_21-007396?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/) |
 | 🏗 **构建** | [![Gradle 8.8](https://img.shields.io/badge/Gradle_8.8-02303A?style=flat-square&logo=gradle&logoColor=white)](https://gradle.org) |
-| 🔄 **GitHub Action CI** | [![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions) |
+| 🔄 **CI** | [![Build](https://img.shields.io/github/actions/workflow/status/VincentZyuApps/spigot-plugin-bad-apple/build.yml?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/actions) |
 
 ---
 
 ## 📦 下载与安装
 
-[![Download](https://img.shields.io/badge/Download-GitHub_Releases-ED8106?style=for-the-badge&logo=spigotmc&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases)
-[![Music Pack](https://img.shields.io/badge/Music_Pack-Resource_Pack_Release-1DB954?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/bad-apple-music-resource-pack)
+| | |
+|---|---|
+| 🧱 **插件 Jar** | [![Download](https://img.shields.io/badge/Download-GitHub_Releases-ED8106?style=for-the-badge&logo=spigotmc&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases) |
+| 🎵 **资源包 Zip** | [![Music Pack](https://img.shields.io/badge/Music_Pack-Resource_Pack_Release-1DB954?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/bad-apple-music-resource-pack) |
 
 将生成好的 `.jar` 文件放进服务器 `plugins/` 目录后重启即可。
 如果你需要音频播放，还需要额外下载资源包 Release：[bad-apple-music-resource-pack](https://github.com/VincentZyuApps/spigot-plugin-bad-apple/releases/tag/bad-apple-music-resource-pack)。
