@@ -1,4 +1,4 @@
-![spigot-plugin-bad-apple](https://socialify.git.ci/VincentZyuApps/spigot-plugin-bad-apple/image?custom_description=%F0%9F%8E%AC+Spigot+%E6%8F%92%E4%BB%B6%EF%BC%8C%E7%94%A8%E6%96%B9%E5%9D%97%E6%88%96+TextDisplay+%E5%AE%9E%E4%BD%93%E5%9C%A8+Minecraft+%E4%B8%AD%E6%92%AD%E6%94%BE+Bad+Apple&description=1&font=JetBrains+Mono&forks=1&issues=1&language=1&logo=https%3A%2F%2Favatars.githubusercontent.com%2Fu%2F4350249%3Fs%3D200%26v%3D4&name=1&owner=1&pulls=1&stargazers=1&theme=Light)
+![spigot-plugin-bad-apple](https://socialify.git.ci/VincentZyuApps/spigot-plugin-bad-apple/image?custom_description=%F0%9F%8E%AC+A+flexible+Spigot+plugin+for+playing+Bad+Apple+in+Minecraft+using+blocks+or+TextDisplay+entities.+%F0%9F%8D%8E%E2%9C%A8&description=1&font=JetBrains+Mono&forks=1&issues=1&language=1&logo=https%3A%2F%2Favatars.githubusercontent.com%2Fu%2F4350249%3Fs%3D200%26v%3D4&name=1&owner=1&pulls=1&stargazers=1&theme=Light&v=4)
 
 > **[📖 English](README.md)**
 > **[📖 中文](README-zh.cn.md)**
