@@ -70,8 +70,12 @@ triggers:
     command_stop_enabled: true
     # 允许通过压力板触发 block 模式的开始
     pressure_plate_start_enabled: true
+    # 用于触发 block 模式开始的压力板材质 ID
+    pressure_plate_start_material: PALE_OAK_PRESSURE_PLATE
     # 允许通过压力板触发 block 模式的停止
     pressure_plate_stop_enabled: true
+    # 用于触发 block 模式停止的压力板材质 ID
+    pressure_plate_stop_material: POLISHED_BLACKSTONE_PRESSURE_PLATE
   
   # Text 模式触发配置
   text:
@@ -81,6 +85,10 @@ triggers:
     command_stop_enabled: true
     # 允许通过按钮触发 text 模式的开始
     button_start_enabled: true
+    # 用于触发 text 模式开始的按钮材质 ID
+    button_start_material: PALE_OAK_BUTTON
     # 允许通过按钮触发 text 模式的停止
     button_stop_enabled: true
+    # 用于触发 text 模式停止的按钮材质 ID
+    button_stop_material: POLISHED_BLACKSTONE_BUTTON
 

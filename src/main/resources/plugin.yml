@@ -1,5 +1,5 @@
 name: spigot-plugin-bad-apple
-version: '0.2.6-beta.2'
+version: '0.2.7-beta.1'
 main: qwq.zyu.spigotPluginBadApple.SpigotPluginBadApple
 api-version: '1.21'
 
@@ -16,5 +16,8 @@ commands:
   clear_chess_debug:
     description: 清除调试创建的棋盘实体
     usage: /clear_chess_debug
+  reload_bad_apple_config:
+    description: 重载bad_apple配置并刷新视频帧缓存
+    usage: /reload_bad_apple_config
 
   

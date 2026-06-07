@@ -34,6 +34,7 @@
 | 🧱 **Block Mode** | `/play_bad_apple block` | Renders the video on a wall using black and white concrete blocks |
 | 📝 **Text Mode** | `/play_bad_apple text` | Renders the video using TextDisplay entities for a denser pixel screen |
 | ⏹️ **Stop Playback** | `/stop_bad_apple <text\|block>` | Stops playback, clears cooldown, and optionally cleans blocks or entities |
+| 🔄 **Reload Config** | `/reload_bad_apple_config` | Reloads `config.yml` and refreshes the in-memory video frame cache |
 
 > The plugin ships with `assets/bin_96x54_10fps.zip` inside the JAR and preloads all frames into memory before playback.
 > Both command triggers and physical triggers can be controlled independently from the config.
@@ -147,8 +148,12 @@ triggers:
     command_stop_enabled: true
     # 🟫 允许通过压力板触发 block 模式的开始
     pressure_plate_start_enabled: true
+    # 🧱 用于触发 block 模式开始的压力板材质 ID
+    pressure_plate_start_material: PALE_OAK_PRESSURE_PLATE
     # 🟫 允许通过压力板触发 block 模式的停止
     pressure_plate_stop_enabled: true
+    # 🧱 用于触发 block 模式停止的压力板材质 ID
+    pressure_plate_stop_material: POLISHED_BLACKSTONE_PRESSURE_PLATE
   
   # 🖥️ Text 模式触发配置
   text:
@@ -158,8 +163,12 @@ triggers:
     command_stop_enabled: true
     # 🔴 允许通过按钮触发 text 模式的开始
     button_start_enabled: true
+    # 🧱 用于触发 text 模式开始的按钮材质 ID
+    button_start_material: PALE_OAK_BUTTON
     # 🔴 允许通过按钮触发 text 模式的停止
     button_stop_enabled: true
+    # 🧱 用于触发 text 模式停止的按钮材质 ID
+    button_stop_material: POLISHED_BLACKSTONE_BUTTON
 ```
 
 Config notes:
@@ -171,6 +180,13 @@ Config notes:
 - `playback.audioSoundId`: sound identifier from the client resource pack, including namespace such as `niacl:music_disc.bad_apple`
 - `cleanup.*`: control whether blocks or entities are removed after playback or manual stop
 - `triggers.*`: enable or disable command, pressure plate, and button triggers independently
+- `triggers.block.pressure_plate_*_material` / `triggers.text.button_*_material`: set the trigger block material names, for example `PALE_OAK_BUTTON`
+
+Reloading config:
+
+- After editing `plugins/spigot-plugin-bad-apple/config.yml`, run `/reload_bad_apple_config`
+- The command reloads config values and rebuilds the frame cache, so preprocessing-affecting options such as `horizontal_flip` also take effect
+- Reload is blocked while playback is active to avoid switching runtime state mid-play
 
 ---
 

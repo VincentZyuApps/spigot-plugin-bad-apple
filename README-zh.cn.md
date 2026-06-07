@@ -34,6 +34,7 @@
 | 🧱 **方块模式** | `/play_bad_apple block` | 用黑白混凝土方块在墙面上渲染视频画面 |
 | 📝 **文本模式** | `/play_bad_apple text` | 用 TextDisplay 实体渲染更密集的视频像素屏幕 |
 | ⏹️ **停止播放** | `/stop_bad_apple <text\|block>` | 停止播放、清除冷却，并按配置决定是否清理方块或实体 |
+| 🔄 **重载配置** | `/reload_bad_apple_config` | 重新读取 `config.yml`，并刷新内存中的视频帧缓存 |
 
 > 插件会把 `assets/bin_96x54_10fps.zip` 打包进 JAR，并在播放前预加载全部帧数据到内存。
 > 指令触发与物理触发都可以在配置里分别启用或关闭。
@@ -147,8 +148,12 @@ triggers:
     command_stop_enabled: true
     # 🟫 允许通过压力板触发 block 模式的开始
     pressure_plate_start_enabled: true
+    # 🧱 用于触发 block 模式开始的压力板材质 ID
+    pressure_plate_start_material: PALE_OAK_PRESSURE_PLATE
     # 🟫 允许通过压力板触发 block 模式的停止
     pressure_plate_stop_enabled: true
+    # 🧱 用于触发 block 模式停止的压力板材质 ID
+    pressure_plate_stop_material: POLISHED_BLACKSTONE_PRESSURE_PLATE
   
   # 🖥️ Text 模式触发配置
   text:
@@ -158,8 +163,12 @@ triggers:
     command_stop_enabled: true
     # 🔴 允许通过按钮触发 text 模式的开始
     button_start_enabled: true
+    # 🧱 用于触发 text 模式开始的按钮材质 ID
+    button_start_material: PALE_OAK_BUTTON
     # 🔴 允许通过按钮触发 text 模式的停止
     button_stop_enabled: true
+    # 🧱 用于触发 text 模式停止的按钮材质 ID
+    button_stop_material: POLISHED_BLACKSTONE_BUTTON
 ```
 
 配置说明：
@@ -171,6 +180,13 @@ triggers:
 - `playback.audioSoundId`：客户端资源包里的声音标识，需包含命名空间，例如 `niacl:music_disc.bad_apple`
 - `cleanup.*`：控制播放完毕或手动停止后是否清理方块或实体
 - `triggers.*`：分别控制指令、压力板、按钮触发是否启用
+- `triggers.block.pressure_plate_*_material` / `triggers.text.button_*_material`：配置用于触发开始/停止的方块材质名称，例如 `PALE_OAK_BUTTON`
+
+重载配置：
+
+- 修改服务器 `plugins/spigot-plugin-bad-apple/config.yml` 后，可执行 `/reload_bad_apple_config`
+- 该命令会重新读取配置，并重新加载视频帧缓存，因此 `horizontal_flip` 这类会影响帧预处理的配置也会生效
+- 为避免播放状态错乱，正在播放时不会执行重载，请先停止播放
 
 ---
 

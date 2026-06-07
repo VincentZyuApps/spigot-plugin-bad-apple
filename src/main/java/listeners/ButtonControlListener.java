@@ -26,13 +26,15 @@ public class ButtonControlListener implements Listener {
         if (block == null) return;
         
         Material type = block.getType();
-        if (type != Material.PALE_OAK_BUTTON && type != Material.POLISHED_BLACKSTONE_BUTTON) return;
+        Material startButtonMaterial = plugin.getTextStartButtonMaterial();
+        Material stopButtonMaterial = plugin.getTextStopButtonMaterial();
+        if (type != startButtonMaterial && type != stopButtonMaterial) return;
 
         e.setCancelled(true);
         
-        // 苍白按钮 - 开始播放 text 模式
-        if (type == Material.PALE_OAK_BUTTON) {
-            e.getPlayer().sendMessage("§b[Bad Apple] 你按下了苍白橡木按钮，尝试进行：Text 模式开始播放");
+        // 配置的开始按钮 - 开始播放 text 模式
+        if (type == startButtonMaterial) {
+            e.getPlayer().sendMessage("§b[Bad Apple] 你按下了开始按钮（" + startButtonMaterial + "），尝试进行：Text 模式开始播放");
             
             if (!plugin.isTextButtonStartEnabled()) {
                 e.getPlayer().sendMessage("§c[Bad Apple] 按钮触发 Text 模式开始播放已被禁用！");
@@ -60,9 +62,9 @@ public class ButtonControlListener implements Listener {
                 }, delay);
             }
         }
-        // 黑石按钮 - 停止播放 text 模式
-        else if (type == Material.POLISHED_BLACKSTONE_BUTTON) {
-            e.getPlayer().sendMessage("§b[Bad Apple] 你按下了黑石按钮，尝试进行：Text 模式停止播放");
+        // 配置的停止按钮 - 停止播放 text 模式
+        else if (type == stopButtonMaterial) {
+            e.getPlayer().sendMessage("§b[Bad Apple] 你按下了停止按钮（" + stopButtonMaterial + "），尝试进行：Text 模式停止播放");
             
             if (!plugin.isTextButtonStopEnabled()) {
                 e.getPlayer().sendMessage("§c[Bad Apple] 按钮触发 Text 模式停止播放已被禁用！");
@@ -91,10 +93,12 @@ public class ButtonControlListener implements Listener {
         // 检查是否踩到压力板
         if (blockTo != null && blockFrom != blockTo) {
             Material type = blockTo.getType();
+            Material startPressurePlateMaterial = plugin.getBlockStartPressurePlateMaterial();
+            Material stopPressurePlateMaterial = plugin.getBlockStopPressurePlateMaterial();
             
-            // 苍白橡木压力板 - 开始播放 block 模式
-            if (type == Material.PALE_OAK_PRESSURE_PLATE) {
-                e.getPlayer().sendMessage("§b[Bad Apple] 你踩下了苍白橡木压力板，尝试进行：Block 模式开始播放");
+            // 配置的开始压力板 - 开始播放 block 模式
+            if (type == startPressurePlateMaterial) {
+                e.getPlayer().sendMessage("§b[Bad Apple] 你踩下了开始压力板（" + startPressurePlateMaterial + "），尝试进行：Block 模式开始播放");
                 
                 if (!plugin.isBlockPressurePlateStartEnabled()) {
                     e.getPlayer().sendMessage("§c[Bad Apple] 压力板触发 Block 模式开始播放已被禁用！");
@@ -124,9 +128,9 @@ public class ButtonControlListener implements Listener {
                 
                 e.getPlayer().sendMessage("§a[Bad Apple] 开始播放 Block 模式！");
             }
-            // 黑石压力板 - 停止播放 block 模式
-            else if (type == Material.POLISHED_BLACKSTONE_PRESSURE_PLATE) {
-                e.getPlayer().sendMessage("§b[Bad Apple] 你踩下了黑石压力板，尝试进行：Block 模式停止播放");
+            // 配置的停止压力板 - 停止播放 block 模式
+            else if (type == stopPressurePlateMaterial) {
+                e.getPlayer().sendMessage("§b[Bad Apple] 你踩下了停止压力板（" + stopPressurePlateMaterial + "），尝试进行：Block 模式停止播放");
                 
                 if (!plugin.isBlockPressurePlateStopEnabled()) {
                     e.getPlayer().sendMessage("§c[Bad Apple] 压力板触发 Block 模式停止播放已被禁用！");

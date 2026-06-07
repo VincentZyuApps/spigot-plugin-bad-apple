@@ -4,8 +4,9 @@ import Command.playBadAppleCommand;
 import Command.stopBadAppleCommand;
 import Command.debugTextDisplayChessCommand;
 import Command.clearChessDebugCommand;
+import Command.reloadBadAppleConfigCommand;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -43,6 +44,10 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     private boolean textCommandStopEnabled;
     private boolean textButtonStartEnabled;
     private boolean textButtonStopEnabled;
+    private Material textStartButtonMaterial;
+    private Material textStopButtonMaterial;
+    private Material blockStartPressurePlateMaterial;
+    private Material blockStopPressurePlateMaterial;
     
     // Cleanup configurations
     private boolean blockClearOnComplete;
@@ -94,6 +99,10 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         Objects.requireNonNull(
                 getCommand("clear_chess_debug")
         ).setExecutor(new clearChessDebugCommand(this, chessCommand));
+
+        Objects.requireNonNull(
+                getCommand("reload_bad_apple_config")
+        ).setExecutor(new reloadBadAppleConfigCommand(this));
         
     // 注册按钮监听
     getServer().getPluginManager().registerEvents(
@@ -153,6 +162,22 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         textCommandStopEnabled = getConfig().getBoolean("triggers.text.command_stop_enabled", true);
         textButtonStartEnabled = getConfig().getBoolean("triggers.text.button_start_enabled", true);
         textButtonStopEnabled = getConfig().getBoolean("triggers.text.button_stop_enabled", true);
+        textStartButtonMaterial = parseMaterialConfig(
+                "triggers.text.button_start_material",
+                Material.PALE_OAK_BUTTON
+        );
+        textStopButtonMaterial = parseMaterialConfig(
+                "triggers.text.button_stop_material",
+                Material.POLISHED_BLACKSTONE_BUTTON
+        );
+        blockStartPressurePlateMaterial = parseMaterialConfig(
+                "triggers.block.pressure_plate_start_material",
+                Material.PALE_OAK_PRESSURE_PLATE
+        );
+        blockStopPressurePlateMaterial = parseMaterialConfig(
+                "triggers.block.pressure_plate_stop_material",
+                Material.POLISHED_BLACKSTONE_PRESSURE_PLATE
+        );
         
         // 读取清理配置
         blockClearOnComplete = getConfig().getBoolean("cleanup.block.clear_on_complete", true);
@@ -164,7 +189,40 @@ public final class SpigotPluginBadApple extends JavaPlugin {
         getLogger().info("Block模式 - 墙体位置(" + x + "," + y + "," + z + "), 朝向: " + wallDirection);
         getLogger().info("Text模式 - 墙体位置(" + textX + "," + textY + "," + textZ + "), 朝向: " + textDirection + ", 双面显示: " + enableBothSide);
         getLogger().info("触发方式配置已加载完成");
+        getLogger().info("触发器材质 - Text[开始:" + textStartButtonMaterial + ", 停止:" + textStopButtonMaterial +
+                "], Block[开始:" + blockStartPressurePlateMaterial + ", 停止:" + blockStopPressurePlateMaterial + "]");
         getLogger().info("清理配置 - Block[完成:" + blockClearOnComplete + ", 停止:" + blockClearOnStop + "], Text[完成:" + textClearOnComplete + ", 停止:" + textClearOnStop + "]");
+    }
+
+    private Material parseMaterialConfig(String path, Material defaultMaterial) {
+        String rawValue = getConfig().getString(path, defaultMaterial.name());
+        if (rawValue == null || rawValue.isBlank()) {
+            return defaultMaterial;
+        }
+
+        Material material = Material.matchMaterial(rawValue.trim(), false);
+        if (material == null) {
+            getLogger().warning("无效材质配置 " + path + "=" + rawValue + "，回退到默认值 " + defaultMaterial);
+            return defaultMaterial;
+        }
+        return material;
+    }
+
+    public boolean reloadPluginConfiguration() {
+        loadConfiguration();
+
+        if (videoPlayer == null) {
+            getLogger().warning("VideoPlayer 尚未初始化，跳过视频帧重载");
+            return false;
+        }
+
+        boolean framesLoaded = videoPlayer.loadFrames();
+        if (framesLoaded) {
+            getLogger().info("Bad Apple 插件配置与视频帧已重新加载");
+        } else {
+            getLogger().severe("配置已重新加载，但视频帧重载失败");
+        }
+        return framesLoaded;
     }
     
     public boolean isPlaying() {
@@ -309,6 +367,10 @@ public final class SpigotPluginBadApple extends JavaPlugin {
     public boolean isTextCommandStopEnabled() { return textCommandStopEnabled; }
     public boolean isTextButtonStartEnabled() { return textButtonStartEnabled; }
     public boolean isTextButtonStopEnabled() { return textButtonStopEnabled; }
+    public Material getTextStartButtonMaterial() { return textStartButtonMaterial; }
+    public Material getTextStopButtonMaterial() { return textStopButtonMaterial; }
+    public Material getBlockStartPressurePlateMaterial() { return blockStartPressurePlateMaterial; }
+    public Material getBlockStopPressurePlateMaterial() { return blockStopPressurePlateMaterial; }
 
     // 清理配置获取方法
     public boolean isBlockClearOnComplete() { return blockClearOnComplete; }
